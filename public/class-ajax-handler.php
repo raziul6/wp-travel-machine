@@ -23,13 +23,21 @@ class AjaxHandler {
         $item_type = sanitize_text_field( wp_unslash( $_POST['item_type'] ?? 'trip' ) );
         $table = $wpdb->prefix . 'wptm_wishlist';
 
-        $exists = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table WHERE user_id=%d AND item_id=%d AND item_type=%s", $user_id, $item_id, $item_type ) );
+        if ( ! $item_id ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid item.', 'wp-travel-machine' ) ) );
+        }
+
+        $where  = array( 'user_id' => $user_id, 'item_id' => $item_id, 'item_type' => $item_type );
+        $exists = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $table WHERE user_id=%d AND item_id=%d AND item_type=%s", $user_id, $item_id, $item_type ) );
 
         if ( $exists ) {
-            $wpdb->delete( $table, array( 'id' => $exists ) );
+            // Delete every matching row so any legacy duplicates are cleared too.
+            $wpdb->delete( $table, $where );
             wp_send_json_success( array( 'action' => 'removed', 'message' => __( 'Removed from wishlist.', 'wp-travel-machine' ) ) );
         } else {
-            $wpdb->insert( $table, array( 'user_id' => $user_id, 'item_id' => $item_id, 'item_type' => $item_type ) );
+            // The table's unique key (user_id, item_id, item_type) keeps this
+            // idempotent even if two requests race.
+            $wpdb->insert( $table, $where );
             wp_send_json_success( array( 'action' => 'added', 'message' => __( 'Added to wishlist!', 'wp-travel-machine' ) ) );
         }
     }
@@ -39,7 +47,7 @@ class AjaxHandler {
         if ( ! is_user_logged_in() ) wp_send_json_error();
 
         global $wpdb;
-        $items = $wpdb->get_results( $wpdb->prepare( "SELECT item_id, item_type FROM {$wpdb->prefix}wptm_wishlist WHERE user_id=%d", get_current_user_id() ) );
+        $items = $wpdb->get_results( $wpdb->prepare( "SELECT item_id, item_type FROM {$wpdb->prefix}wptm_wishlist WHERE user_id=%d GROUP BY item_id, item_type", get_current_user_id() ) );
         $ids = wp_list_pluck( $items, 'item_id' );
         wp_send_json_success( array( 'items' => $ids ) );
     }

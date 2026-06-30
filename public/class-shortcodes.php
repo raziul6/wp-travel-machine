@@ -218,8 +218,9 @@ class Shortcodes {
             echo '<a href="' . esc_url( wp_login_url( get_permalink() ) ) . '" class="wptm-btn wptm-btn--primary">' . esc_html__( 'Log In', 'wp-travel-machine' ) . '</a></div>';
         } else {
             global $wpdb;
+            // GROUP BY collapses any legacy duplicate rows so each item shows once.
             $items = $wpdb->get_results( $wpdb->prepare(
-                "SELECT item_id, item_type FROM {$wpdb->prefix}wptm_wishlist WHERE user_id = %d ORDER BY created_at DESC",
+                "SELECT item_id, item_type FROM {$wpdb->prefix}wptm_wishlist WHERE user_id = %d GROUP BY item_id, item_type ORDER BY MAX(created_at) DESC",
                 get_current_user_id()
             ) );
             echo '<div class="wptm-wishlist-page">';

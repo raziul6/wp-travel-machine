@@ -413,4 +413,34 @@ class Activator {
             update_post_meta( $trip_id, '_wptm_price', \WPTravelMachine\PostTypes\Trip::lowest_price( $pricing ) );
         }
     }
+
+    /**
+     * Remove duplicate wishlist rows left by installs that predate the unique
+     * key, then (re)add that key so duplicates can't recur. Idempotent.
+     */
+    public static function dedupe_wishlist() {
+        global $wpdb;
+        $table = $wpdb->prefix . 'wptm_wishlist';
+
+        // Bail if the table doesn't exist yet.
+        if ( $table !== $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) ) {
+            return;
+        }
+
+        // Keep the lowest id per (user_id, item_id, item_type); drop the rest.
+        $wpdb->query(
+            "DELETE w1 FROM {$table} w1
+             INNER JOIN {$table} w2
+                 ON w1.user_id = w2.user_id
+                AND w1.item_id = w2.item_id
+                AND w1.item_type = w2.item_type
+                AND w1.id > w2.id"
+        );
+
+        // Ensure the unique key is present (older tables may lack it).
+        $has_key = $wpdb->get_var( $wpdb->prepare( "SHOW INDEX FROM {$table} WHERE Key_name = %s", 'user_item' ) );
+        if ( ! $has_key ) {
+            $wpdb->query( "ALTER TABLE {$table} ADD UNIQUE KEY user_item (user_id, item_id, item_type)" );
+        }
+    }
 }

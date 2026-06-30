@@ -154,7 +154,7 @@ class Plugin {
     public function maybe_upgrade() {
         // Current "content schema" — bump when new system pages/taxonomies/meta
         // backfills are added.
-        $pages_version = 4;
+        $pages_version = 5;
 
         if ( (int) get_option( 'wptm_pages_version', 0 ) >= $pages_version ) {
             return;
@@ -165,6 +165,9 @@ class Plugin {
         Activator::create_pages();
         Activator::seed_default_terms();
         Activator::backfill_trip_prices();
+
+        // One-time: clear legacy duplicate wishlist rows and ensure the unique key.
+        Activator::dedupe_wishlist();
 
         // New taxonomies were registered this request; refresh rewrite rules.
         flush_rewrite_rules();

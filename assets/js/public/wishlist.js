@@ -64,16 +64,27 @@
 
     /* On the wishlist page, drop the card once it's removed (and show the
        empty state when nothing is left). */
-    function removeFromWishlistPage(btn) {
+    function removeFromWishlistPage(btn, id) {
         var grid = btn.closest('.wptm-wishlist-grid');
-        if (!grid) return;
-        var card = btn.closest('.wptm-trip-card, .wptm-hotel-card');
-        if (!card) return;
-        card.style.transition = 'opacity .25s ease, transform .25s ease';
-        card.style.opacity = '0';
-        card.style.transform = 'scale(.96)';
+        if (!grid) return false;
+
+        // Remove EVERY card for this item, not just the clicked one — covers any
+        // legacy duplicate cards so no orphaned twin is left to re-add itself.
+        var cards = grid.querySelectorAll('.wptm-trip-card[data-id="' + id + '"], .wptm-hotel-card[data-id="' + id + '"]');
+        if (!cards.length) {
+            var c = btn.closest('.wptm-trip-card, .wptm-hotel-card');
+            cards = c ? [c] : [];
+        }
+        if (!cards.length) return false;
+
+        Array.prototype.forEach.call(cards, function (card) {
+            card.style.pointerEvents = 'none';
+            card.style.transition = 'opacity .25s ease, transform .25s ease';
+            card.style.opacity = '0';
+            card.style.transform = 'scale(.96)';
+        });
         setTimeout(function () {
-            card.remove();
+            Array.prototype.forEach.call(cards, function (card) { card.remove(); });
             if (!grid.querySelector('.wptm-trip-card, .wptm-hotel-card')) {
                 var page = grid.closest('.wptm-wishlist-page');
                 grid.remove();
@@ -83,18 +94,23 @@
                 }
             }
         }, 260);
+        return true;
     }
 
     /* ── Toggle (logged-in = server) ── */
     function toggleServer(btn, id, type) {
         if (typeof window.wptmAjax !== 'function') return;
+        btn.setAttribute('data-wptm-busy', '1');
         btn.style.pointerEvents = 'none';
         window.wptmAjax('wptm_toggle_wishlist', { item_id: id, item_type: type }, function (r) {
-            btn.style.pointerEvents = '';
             if (r && r.success && r.data) {
                 setActive(id, r.data.action === 'added');
                 toast(r.data.message);
-                if (r.data.action === 'removed') { removeFromWishlistPage(btn); }
+                // On the wishlist page the card leaves — keep the button locked
+                // so a click during the fade can't re-add the item.
+                if (r.data.action === 'removed' && removeFromWishlistPage(btn, id)) {
+                    return;
+                }
             } else {
                 // A non-JSON / -1 reply means an expired nonce on a cached page.
                 var msg = (r && r.data && r.data.message)
@@ -102,6 +118,8 @@
                     : 'Could not update your wishlist. Please refresh the page and try again.';
                 toast(msg, 'error');
             }
+            btn.style.pointerEvents = '';
+            btn.removeAttribute('data-wptm-busy');
         });
     }
 
@@ -118,6 +136,7 @@
             var btn = e.target.closest('.wptm-wishlist-btn, .wptm-trip-card__wishlist, .wptm-hotel-card__wishlist');
             if (!btn) return;
             e.preventDefault();
+            if (btn.getAttribute('data-wptm-busy')) return; // ignore double-clicks mid-request
 
             var id = btn.dataset.itemId;
             if (!id) return;
