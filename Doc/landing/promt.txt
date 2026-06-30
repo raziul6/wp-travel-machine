@@ -21,8 +21,8 @@ Primary:     warm orange  #FD4621
 Secondary:   amber/coral  #FF8A3D   (use as a 135° gradient with the primary)
 Ink/dark:    near-black brown #1A1410  /  deep espresso #221B15
 Light bg:    warm off-white #FFFAF6
-Fonts:       Headlines = "Sora" (geometric, bold 700–800)
-             Body/UI   = "Plus Jakarta Sans"
+Fonts:       Headlines = "Inter" (clean, semibold 600–700)
+             Body/UI   = "Inter"
 Mood:        premium, modern, clean SaaS, travel/wanderlust, trustworthy,
              a little "AI/tech". NOT clip-art, NOT cheap stock-photo collage.
 Motifs:      airplane/route line, map pin, sun, mountains, hotel/bed,
@@ -135,8 +135,8 @@ Aspect ratio ~1.9:1.
 ----------------------------------------------------------------
 AI image tools mangle long text. Generate the artwork WITHOUT text (or with
 Ideogram/DALL·E for short words only), then overlay copy in Figma/Canva using:
-  • Headline font: Sora, weight 800
-  • Body font: Plus Jakarta Sans, weight 600
+  • Headline font: Inter, weight 700
+  • Body font: Inter, weight 500
 Suggested copy:
   Headline:  "AI-Powered Travel & Hotel Booking for WordPress"
   Sub:       "Trips · Hotels · Smart Booking · AI Recommendations"

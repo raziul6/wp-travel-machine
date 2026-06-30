@@ -447,6 +447,8 @@
 
             <div class="note"><b>Provider‑agnostic.</b> Works with <b>Anthropic (Claude)</b>, <b>OpenAI</b>, or any OpenAI‑compatible endpoint — <b>Groq, Gemini, OpenRouter, Ollama</b> and more. Every AI request is <b>nonce‑protected</b>, admin actions require a capability check, and public endpoints are <b>rate‑limited per visitor</b> (default 10/min, see the <a href="#filters"><code>wptm_ai_rate_limit</code></a> filter) to keep API costs predictable.</div>
 
+            <div class="tip"><b>Updated 30 Jun 2026.</b> The <b>chat concierge</b> and <b>smart recommendations</b> now return <b>real, bookable trip &amp; hotel cards</b> (validated against your catalogue server‑side — the AI can't invent a trip) instead of plain text, and both now include <b>hotels</b>. The chat input is multi‑line and renders links, and the interface moved to the <b>Inter</b> typeface with a lighter, cleaner weight scale.</div>
+
             <h3>AI Trip Builder <span style="font-size:10px;font-weight:800;letter-spacing:.04em;color:#fff;background:var(--brand);padding:2px 8px;border-radius:999px;vertical-align:middle;margin-left:6px">NEW</span></h3>
             <p>In the Trip editor, the <b>Overview</b> tab opens with an <b>AI Trip Builder</b> panel. Give it a destination, number of days, a <b>style</b> (adventure, luxury, family, honeymoon…) and a <b>budget level</b>, then click <b>Generate Full Trip</b>. One call writes a complete, ready‑to‑publish trip into the real editor fields across every tab:</p>
             <table>
@@ -468,8 +470,8 @@
             <h3>Visitor‑facing AI</h3>
             <table>
                 <tr><th>Feature</th><th>What it does</th><th>Surface</th></tr>
-                <tr><td>Conversational concierge</td><td>A floating assistant that answers questions from your live trip catalogue.</td><td><code>[wptm_ai_chat]</code></td></tr>
-                <tr><td>Smart recommendations</td><td>Matches a visitor's budget &amp; preferences to trips with a relevance score.</td><td><code>[wptm_ai_recommend]</code></td></tr>
+                <tr><td>Conversational concierge</td><td>A floating assistant that answers questions from your live catalogue and, when the visitor shows booking intent, suggests <b>real trip &amp; hotel cards inline</b> (image, price, link).</td><td><code>[wptm_ai_chat]</code></td></tr>
+                <tr><td>Smart recommendations</td><td>Matches a visitor's budget &amp; preferences to real <b>trips and hotels</b>, returned as <b>bookable cards</b> with a relevance score and a “why it fits” note.</td><td><code>[wptm_ai_recommend]</code></td></tr>
                 <tr><td>Natural‑language search</td><td>Parses queries like “7‑day beach trip under $1500” into real catalogue filters (falls back to standard search if AI is off).</td><td>Search bar</td></tr>
                 <tr><td>Itinerary generator</td><td>Generates day‑by‑day plans from a destination + days, appended to the Itinerary tab.</td><td>Trip editor</td></tr>
             </table>
@@ -556,7 +558,7 @@ wp-content/themes/your-theme/wp-travel-machine/partials/booking-form.php</code><
     <span class="tok-k">echo</span> <span class="tok-s">'&lt;div class="my-promo"&gt;Free breakfast included!&lt;/div&gt;'</span>;
 } );</code></pre>
             <h4>Load front‑end styles only where needed</h4>
-            <p>The plugin enqueues <code>public.css</code> on all front‑end pages, plus the self‑hosted fonts (Sora + Plus Jakarta Sans, bundled — no external request). Disable them with <code>add_filter('wptm_enqueue_fonts','__return_false')</code> if your theme provides its own fonts.</p>
+            <p>The plugin enqueues <code>public.css</code> on all front‑end pages, plus the self‑hosted <b>Inter</b> font (bundled — no external request). Disable it with <code>add_filter('wptm_enqueue_fonts','__return_false')</code> if your theme provides its own fonts.</p>
         </section>
 
         <!-- ICONS -->

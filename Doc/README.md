@@ -9,6 +9,8 @@ Version 1.0.0 · Requires WordPress 6.0+ · PHP 7.4+
 
 ## Table of Contents
 
+- [What's New](#whats-new)
+
 - [Overview](#overview)
 - [Requirements & Installation](#requirements--installation)
 - [Quick Start](#quick-start)
@@ -35,6 +37,17 @@ Version 1.0.0 · Requires WordPress 6.0+ · PHP 7.4+
 - [REST API](#rest-api)
 - [Database Tables](#database-tables)
 - [FAQ & Troubleshooting](#faq--troubleshooting)
+
+---
+
+## What's New
+
+**Update — 30 June 2026**
+
+- **AI Smart Recommendations now return real, bookable cards.** `[wptm_ai_recommend]` matches a visitor's preferences & budget to actual **trips _and_ hotels** (previously trips only, text‑only) and renders them as real cards — image, price, "View Details" link — each with a relevance score and a short "why it fits" note. The AI returns catalogue IDs that are **validated server‑side**, so it can never surface a trip that doesn't exist.
+- **The AI Chat is now a conversational recommender.** `[wptm_ai_chat]` still answers questions, but when a visitor shows booking intent it also suggests up to **3 real trip/hotel cards inline** (compact 2‑up grid). One structured API call per message keeps it fast and cheap; suggested IDs are validated the same way.
+- **Chat UX upgrades.** Fixed the message‑list scrolling (it no longer scrolls the whole page), responsive sizing on mobile, a **multi‑line auto‑growing input** (Enter sends, Shift+Enter for a newline), **clickable links** in replies, and Escape‑to‑close.
+- **New typeface & lighter UI.** The front end and admin now use the self‑hosted **Inter** font (replacing Plus Jakarta Sans + Sora) with a toned‑down weight scale for a cleaner, less‑bold look. Bundled with the plugin — no external/CDN request. Disable via the [`wptm_enqueue_fonts`](#filter-hooks) filter.
 
 ---
 
@@ -148,7 +161,7 @@ The front‑end booking calendar reflects everything:
 | `[wptm_terms]` | Any taxonomy grid | `taxonomy` `count` `columns` `orderby` `order` |
 | `[wptm_my_bookings]` | User orders | — |
 | `[wptm_wishlist]` `[wptm_cart]` `[wptm_checkout]` `[wptm_booking_confirmation]` | System pages | — |
-| `[wptm_ai_chat]` `[wptm_ai_recommend]` | AI assistant (if enabled) | `title` (recommend) |
+| `[wptm_ai_chat]` `[wptm_ai_recommend]` | AI assistant (if enabled) — both return **real, bookable trip & hotel cards** | `title` (recommend) |
 
 **Grid attributes:** `count` (12), `columns` (1–4), `orderby` (`date`/`title`/`price`/`rand`/`menu_order`), `order` (`ASC`/`DESC`), `destination`/`activity` (slug), `paginate` (`yes`), `filters` (`no`), `gap`, `cardRadius`, `accent`, `titleColor`, `textColor`, `btnBg`, `btnColor`, `align`.
 

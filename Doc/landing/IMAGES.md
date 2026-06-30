@@ -30,4 +30,4 @@ Drop each screenshot in and replace the matching `.ph` placeholder block with an
 - Export at **2×** (retina) for crispness, then let CSS scale them down.
 - Keep a consistent browser chrome / device frame for the front-end shots.
 - JPG for photos/screenshots, PNG where you need sharp UI edges or transparency.
-- Brand colours used on the page: `#fd4621 → #ff8a3d`; fonts: Sora + Plus Jakarta Sans.
+- Brand colours used on the page: `#fd4621 → #ff8a3d`; font: Inter.
