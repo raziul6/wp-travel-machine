@@ -13,7 +13,7 @@ $url  = wptm_pro_upgrade_url();
         <div class="wptm-pro-hero__main">
             <span class="wptm-pro-hero__eyebrow">✦ <?php esc_html_e( 'WP Travel Machine', 'wp-travel-machine' ); ?> <strong>PRO</strong></span>
             <h1><?php esc_html_e( 'Unlock the full power of your travel store.', 'wp-travel-machine' ); ?></h1>
-            <p><?php esc_html_e( 'AI that writes your trips and replies to customers, Stripe & PayPal checkout, printable invoices, and coupons — all in one upgrade.', 'wp-travel-machine' ); ?></p>
+            <p><?php esc_html_e( 'AI that writes your trips and replies to customers, Stripe / PayPal / Razorpay checkout, printable invoices, coupons, pickup points and the AI Style generator — all in one upgrade.', 'wp-travel-machine' ); ?></p>
             <div class="wptm-pro-hero__cta">
                 <a class="button button-primary button-hero" href="<?php echo esc_url( $url ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Buy Pro', 'wp-travel-machine' ); ?> →</a>
                 <a class="button button-hero wptm-pro-ghost" href="<?php echo esc_url( $url ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'See live demo', 'wp-travel-machine' ); ?></a>
@@ -21,7 +21,7 @@ $url  = wptm_pro_upgrade_url();
         </div>
         <div class="wptm-pro-hero__badges">
             <span><span class="dashicons dashicons-superhero-alt"></span> <?php esc_html_e( 'AI Suite', 'wp-travel-machine' ); ?></span>
-            <span><span class="dashicons dashicons-cart"></span> <?php esc_html_e( 'Stripe & PayPal', 'wp-travel-machine' ); ?></span>
+            <span><span class="dashicons dashicons-cart"></span> <?php esc_html_e( 'Stripe · PayPal · Razorpay', 'wp-travel-machine' ); ?></span>
             <span><span class="dashicons dashicons-media-document"></span> <?php esc_html_e( 'Invoices', 'wp-travel-machine' ); ?></span>
             <span><span class="dashicons dashicons-tag"></span> <?php esc_html_e( 'Coupons', 'wp-travel-machine' ); ?></span>
         </div>
@@ -39,14 +39,18 @@ $url  = wptm_pro_upgrade_url();
             <tbody>
                 <?php foreach ( $rows as $row ) :
                     list( $label, $free, $pro ) = $row;
-                    $tick = '<span class="wptm-yes dashicons dashicons-yes"></span>';
-                    $no   = '<span class="wptm-no dashicons dashicons-minus"></span>';
-                    ?>
-                    <tr>
-                        <td><?php echo esc_html( $label ); ?></td>
-                        <td class="wptm-pro-col"><?php echo $free ? $tick : $no; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
-                        <td class="wptm-pro-col wptm-pro-col--pro"><?php echo $pro ? $tick : $no; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
-                    </tr>
+                    if ( null === $free && null === $pro ) : ?>
+                        <tr class="wptm-pro-cat"><td colspan="3"><?php echo esc_html( $label ); ?></td></tr>
+                    <?php else :
+                        $tick = '<span class="wptm-yes dashicons dashicons-yes"></span>';
+                        $no   = '<span class="wptm-no dashicons dashicons-minus"></span>';
+                        ?>
+                        <tr>
+                            <td><?php echo esc_html( $label ); ?></td>
+                            <td class="wptm-pro-col"><?php echo $free ? $tick : $no; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
+                            <td class="wptm-pro-col wptm-pro-col--pro"><?php echo $pro ? $tick : $no; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
+                        </tr>
+                    <?php endif; ?>
                 <?php endforeach; ?>
             </tbody>
             <tfoot>

@@ -2108,6 +2108,8 @@
 .wptm-pro-col--pro { background: linear-gradient(180deg, rgba(253,70,33,.06), transparent); }
 .wptm-pro-table thead .wptm-pro-col--pro { color: var(--wptm-primary); background: var(--wptm-primary-soft); }
 .wptm-pro-table tbody tr:hover { background: var(--wptm-bg); }
+.wptm-pro-table .wptm-pro-cat:hover { background: none; }
+.wptm-pro-table .wptm-pro-cat td { background: var(--wptm-bg); font-weight: 700; font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--wptm-text-muted); padding: 9px 18px; }
 .wptm-pro-table .wptm-yes { color: var(--wptm-success); font-size: 20px; width: 20px; height: 20px; }
 .wptm-pro-table .wptm-no { color: var(--wptm-border-strong); font-size: 18px; width: 18px; height: 18px; }
 .wptm-pro-current { font-size: 11px; font-weight: 600; color: var(--wptm-text-light); text-transform: uppercase; letter-spacing: .04em; }

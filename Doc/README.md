@@ -10,6 +10,8 @@ Version 1.0.0 · Requires WordPress 6.0+ · PHP 7.4+
 ## Table of Contents
 
 - [What's New](#whats-new)
+- [Free vs Pro](#free-vs-pro)
+- [AI Features (Free & Pro)](#ai-features-free--pro)
 
 - [Overview](#overview)
 - [Requirements & Installation](#requirements--installation)
@@ -48,6 +50,95 @@ Version 1.0.0 · Requires WordPress 6.0+ · PHP 7.4+
 - **The AI Chat is now a conversational recommender.** `[wptm_ai_chat]` still answers questions, but when a visitor shows booking intent it also suggests up to **3 real trip/hotel cards inline** (compact 2‑up grid). One structured API call per message keeps it fast and cheap; suggested IDs are validated the same way.
 - **Chat UX upgrades.** Fixed the message‑list scrolling (it no longer scrolls the whole page), responsive sizing on mobile, a **multi‑line auto‑growing input** (Enter sends, Shift+Enter for a newline), **clickable links** in replies, and Escape‑to‑close.
 - **New typeface & lighter UI.** The front end and admin now use the self‑hosted **Inter** font (replacing Plus Jakarta Sans + Sora) with a toned‑down weight scale for a cleaner, less‑bold look. Bundled with the plugin — no external/CDN request. Disable via the [`wptm_enqueue_fonts`](#filter-hooks) filter.
+- **AI Style generator + List layout for the grids.** Trip/Hotel Grid blocks and Elementor widgets gained a **Grid/List** layout toggle, and a Pro **✨ AI Style** generator: describe a vibe and get 3 cohesive card palettes that fill the existing style controls (it returns validated colour/radius/gap values, never raw CSS). Available in both the Gutenberg and Elementor editors.
+- **Free / Pro AI split.** Natural‑language search and the chat assistant's text replies now work on the **free** version; everything else stays Pro. Public AI endpoints are rate‑limited per minute and, on free sites, capped per day.
+
+---
+
+## Free vs Pro
+
+The plugin is fully functional for free; **Pro** unlocks online payments, revenue tools, and the advanced AI. All AI runs on **your own provider API key**.
+
+| Feature | Free | Pro |
+|---|:---:|:---:|
+| **Content** | | |
+| Trips — itinerary, highlights, includes/excludes, FAQ, gallery, map | ✅ | ✅ |
+| Hotels — room types, nightly rates, facilities, star rating, gallery, map | ✅ | ✅ |
+| Unlimited trips, hotels & bookings | ✅ | ✅ |
+| Taxonomies — Destinations, Activities, Trip Types, Difficulty | ✅ | ✅ |
+| Taxonomies — Hotel Types, Hotel Facilities | ✅ | ✅ |
+| Reviews & star ratings | ✅ | ✅ |
+| Single pages — gallery + lightbox, location map (Leaflet), sticky booking bar | ✅ | ✅ |
+| Related trips/hotels on single pages | ✅ | ✅ |
+| **Booking engine** | | |
+| Availability calendar — date‑range & single‑date, blocked/sold‑out dates | ✅ | ✅ |
+| Pricing tiers (Adult/Child/…) & per‑traveller details | ✅ | ✅ |
+| Taxes & fees | ✅ | ✅ |
+| Session‑less cart & multi‑item checkout | ✅ | ✅ |
+| Server‑side price validation | ✅ | ✅ |
+| **Coupons / discount codes** | — | ✅ |
+| **Pickup points** (priced add‑on at checkout) | — | ✅ |
+| **Payments** | | |
+| Manual / bank transfer | ✅ | ✅ |
+| **Stripe** (cards, SCA / 3‑D Secure) | — | ✅ |
+| **PayPal** | — | ✅ |
+| **Razorpay** | — | ✅ |
+| **Printable invoices + company details** | — | ✅ |
+| **Display & page building** | | |
+| 13 shortcodes | ✅ | ✅ |
+| Gutenberg blocks (Trip/Hotel grid, search, destinations, booking) | ✅ | ✅ |
+| Elementor widgets (same five) | ✅ | ✅ |
+| **Grid / List** layout + columns | ✅ | ✅ |
+| Style controls — colours, card radius, gap, alignment | ✅ | ✅ |
+| Destinations & any‑taxonomy grids | ✅ | ✅ |
+| **Search & engagement** | | |
+| Search form (horizontal/vertical) + AJAX filters | ✅ | ✅ |
+| Pagination | ✅ | ✅ |
+| Wishlist | ✅ | ✅ |
+| Compare | ✅ | ✅ |
+| Enquiry form | ✅ | ✅ |
+| **System & admin** | | |
+| System pages — cart, checkout, confirmation, My Bookings | ✅ | ✅ |
+| Branded transactional emails + test email | ✅ | ✅ |
+| Admin dashboard with stats | ✅ | ✅ |
+| Bookings management & Reports | ✅ | ✅ |
+| Search Form builder (admin) | ✅ | ✅ |
+| Guided setup wizard | ✅ | ✅ |
+| Demo importer | ✅ | ✅ |
+| Currency — symbol & position | ✅ | ✅ |
+| Appearance / colour & display settings | ✅ | ✅ |
+| SEO schema markup (JSON‑LD) | ✅ | ✅ |
+| REST API, developer hooks & template overrides | ✅ | ✅ |
+| **AI** (runs on your own provider API key) | | |
+| Natural‑language search | ✅ | ✅ |
+| Chat assistant — conversational text replies | ✅ | ✅ |
+| Chat — **inline bookable trip/hotel cards** | — | ✅ |
+| **Smart recommendations** (bookable cards + relevance score) | — | ✅ |
+| **Trip Builder** (writes a full trip into the editor) | — | ✅ |
+| **Itinerary generator** | — | ✅ |
+| **Customer reply drafting** | — | ✅ |
+| **Style generator** (blocks & Elementor) | — | ✅ |
+
+> Public AI endpoints (search, chat) call your paid API and are reachable by logged‑out visitors, so each visitor is rate‑limited per minute — plus a daily cap on free sites. See [`wptm_ai_rate_limit` / `wptm_ai_daily_limit`](#filter-hooks).
+
+---
+
+## AI Features (Free & Pro)
+
+AI is **provider‑agnostic** — it runs on **your own API key** (Anthropic, OpenAI, or any OpenAI‑compatible endpoint like Groq, Gemini, OpenRouter or Ollama). Enable it under **Settings → AI Features**. Some features are available on the free version; the rest are Pro:
+
+| Feature | Surface | Tier |
+|---|---|---|
+| Natural‑language search (parses queries into real filters) | Search bar | **Free** |
+| Chat assistant — conversational **text** replies | `[wptm_ai_chat]` | **Free** |
+| Chat assistant — inline **bookable** trip/hotel cards | `[wptm_ai_chat]` | Pro |
+| Smart recommendations — real trip/hotel cards + score | `[wptm_ai_recommend]` | Pro |
+| AI Trip Builder (writes a full trip into the editor) | Trip editor | Pro |
+| AI itinerary generator | Trip editor | Pro |
+| AI customer replies (draft booking emails) | Bookings | Pro |
+| AI Style generator (vibe → card palettes) | Block & Elementor editors | Pro |
+
+> **Cost control.** The public endpoints (search, chat) call *your* paid API and are reachable by logged‑out visitors, so each visitor is rate‑limited: **per‑minute** (`wptm_ai_rate_limit`) and, on the free tier, a **daily cap** (`wptm_ai_daily_limit`). See [Filter Hooks](#filter-hooks).
 
 ---
 
@@ -163,7 +254,7 @@ The front‑end booking calendar reflects everything:
 | `[wptm_wishlist]` `[wptm_cart]` `[wptm_checkout]` `[wptm_booking_confirmation]` | System pages | — |
 | `[wptm_ai_chat]` `[wptm_ai_recommend]` | AI assistant (if enabled) — both return **real, bookable trip & hotel cards** | `title` (recommend) |
 
-**Grid attributes:** `count` (12), `columns` (1–4), `orderby` (`date`/`title`/`price`/`rand`/`menu_order`), `order` (`ASC`/`DESC`), `destination`/`activity` (slug), `paginate` (`yes`), `filters` (`no`), `gap`, `cardRadius`, `accent`, `titleColor`, `textColor`, `btnBg`, `btnColor`, `align`.
+**Grid attributes:** `count` (12), `columns` (1–4), `layout` (`grid`/`list`), `orderby` (`date`/`title`/`price`/`rand`/`menu_order`), `order` (`ASC`/`DESC`), `destination`/`activity` (slug), `paginate` (`yes`), `filters` (`no`), `gap`, `cardRadius`, `accent`, `titleColor`, `textColor`, `btnBg`, `btnColor`, `align`.
 
 ```
 [wptm_trips count="6" columns="3" orderby="price" order="ASC"]
@@ -183,11 +274,17 @@ Block category **“WP Travel Machine”** with live preview and **Content** + *
 | Destinations Grid | `wptm/destinations` |
 | Booking Form | `wptm/booking-form` |
 
+**Layout:** Trip/Hotel Grid blocks support a **Grid or List** layout (Content panel). List shows horizontal, full-width cards; Columns applies to Grid only.
+
 **Style controls:** alignment, grid gap, card radius, colors (accent/price, title, text, button bg, button text).
+
+**✨ AI Style (Pro):** the Trip/Hotel Grid inspector has an **AI Style** panel — describe a vibe (e.g. *"luxury beach"*) and the AI returns **3 cohesive palettes** (colors + radius + spacing). Click one to fill the style controls; the preview updates live. Requires AI enabled with a key (free sites see an upgrade note).
 
 ## Elementor Widgets
 
 Same five items under the **WP Travel Machine** category, each with **Content** + **Style** tabs (Destination/Activity are term dropdowns). Render through the same PHP renderer as blocks/shortcodes.
+
+The Trip/Hotel Grid widgets also offer the **Grid/List layout** (Content tab) and, on **Pro**, the **✨ AI Style** generator at the top of the **Style** tab — same "vibe → 3 palettes" flow as the block, applied straight to the widget's color/radius/gap controls.
 
 ## Search & Filters
 
@@ -314,6 +411,8 @@ add_filter( 'wptm_icon_library', function ( $icons ) {
 | `wptm_currencies` / `wptm_countries` | Currency & country lists |
 | `wptm_allowed_map_hosts` | Map‑embed providers |
 | `wptm_enqueue_fonts` / `wptm_fonts_url` | Bundled (self-hosted) fonts |
+| `wptm_ai_rate_limit` | Max AI requests per visitor **per minute** (default: Pro 10, Free 6) |
+| `wptm_ai_daily_limit` | Max AI requests per visitor **per day** (default: Free 150, Pro 0 = unlimited) |
 
 ## Helper Functions
 

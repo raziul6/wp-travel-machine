@@ -12,13 +12,37 @@ class AIEngine {
         add_action( 'wp_ajax_wptm_ai_itinerary', array( $this, 'generate_itinerary' ) );
         add_action( 'wp_ajax_wptm_ai_generate_trip', array( $this, 'generate_trip' ) );
         add_action( 'wp_ajax_wptm_ai_draft_reply', array( $this, 'draft_reply' ) );
+        add_action( 'wp_ajax_wptm_ai_generate_style', array( $this, 'generate_style' ) );
         add_action( 'wp_ajax_wptm_ai_chat', array( $this, 'chat' ) );
         add_action( 'wp_ajax_nopriv_wptm_ai_chat', array( $this, 'chat' ) );
     }
 
-    private function is_enabled() {
-        // AI is a Pro feature.
-        return wptm_is_pro() && (bool) get_option( 'wptm_enable_ai', false ) && ! empty( get_option( 'wptm_ai_api_key', '' ) );
+    /**
+     * Whether AI is configured at all (master switch on + an API key set),
+     * regardless of licence tier.
+     */
+    private function ai_configured() {
+        return (bool) get_option( 'wptm_enable_ai', false ) && ! empty( get_option( 'wptm_ai_api_key', '' ) );
+    }
+
+    /**
+     * Whether a given AI feature may run on this site.
+     *
+     * Free tier unlocks natural-language search and the text chat assistant;
+     * everything else (trip builder, recommendations, itinerary, replies) is Pro.
+     * All features still require AI enabled + an API key.
+     *
+     * @param string $feature 'search' or 'chat' for free features; anything else = Pro.
+     * @return bool
+     */
+    private function is_enabled( $feature = 'pro' ) {
+        if ( ! $this->ai_configured() ) {
+            return false;
+        }
+        if ( 'search' === $feature || 'chat' === $feature ) {
+            return true;
+        }
+        return wptm_is_pro();
     }
 
     /**
@@ -32,19 +56,44 @@ class AIEngine {
     private function rate_limit_ok() {
         $id      = get_current_user_id();
         $bucket  = $id ? 'u' . $id : 'ip' . md5( isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '' );
-        $key     = 'wptm_ai_rl_' . $bucket;
-        $hits    = (int) get_transient( $key );
+        $is_pro  = wptm_is_pro();
 
         /**
          * Filter the max number of AI requests allowed per visitor per minute.
+         * Free sites get a tighter default since public endpoints are backed by
+         * the owner's own paid API key.
          *
-         * @param int $max Maximum requests per minute.
+         * @param int  $max    Maximum requests per minute.
+         * @param bool $is_pro Whether the site is running the Pro licence.
          */
-        $max = (int) apply_filters( 'wptm_ai_rate_limit', 10 );
-        if ( $hits >= $max ) {
+        $per_min = (int) apply_filters( 'wptm_ai_rate_limit', $is_pro ? 10 : 6, $is_pro );
+        $min_key = 'wptm_ai_rl_' . $bucket;
+        $min_hits = (int) get_transient( $min_key );
+        if ( $per_min > 0 && $min_hits >= $per_min ) {
             return false;
         }
-        set_transient( $key, $hits + 1, MINUTE_IN_SECONDS );
+
+        /**
+         * Filter the max number of AI requests allowed per visitor per day.
+         * A daily ceiling protects free sites from a bot draining their API
+         * budget. Return 0 to disable the daily cap (the Pro default).
+         *
+         * @param int  $max    Maximum requests per day (0 = unlimited).
+         * @param bool $is_pro Whether the site is running the Pro licence.
+         */
+        $per_day = (int) apply_filters( 'wptm_ai_daily_limit', $is_pro ? 0 : 150, $is_pro );
+        // Date-scoped key so the counter resets each UTC day (a fixed TTL alone
+        // would slide forward on every hit and never reset for active visitors).
+        $day_key  = 'wptm_ai_rld_' . gmdate( 'Ymd' ) . '_' . $bucket;
+        $day_hits = (int) get_transient( $day_key );
+        if ( $per_day > 0 && $day_hits >= $per_day ) {
+            return false;
+        }
+
+        set_transient( $min_key, $min_hits + 1, MINUTE_IN_SECONDS );
+        if ( $per_day > 0 ) {
+            set_transient( $day_key, $day_hits + 1, DAY_IN_SECONDS );
+        }
         return true;
     }
 
@@ -339,9 +388,97 @@ class AIEngine {
         return $html;
     }
 
+    /**
+     * Generate cohesive card style presets from a free-text "vibe" for the
+     * block / Elementor editors. The model only returns values for the existing
+     * style attributes (colors, radius, gap) — never raw CSS — so output is safe.
+     */
+    public function generate_style() {
+        check_ajax_referer( 'wptm_ai_nonce', 'nonce' );
+        if ( ! $this->is_enabled() || ! current_user_can( 'edit_posts' ) ) {
+            wp_send_json_error( array( 'message' => __( 'AI style generation is a Pro feature.', 'wp-travel-machine' ) ) );
+        }
+        if ( ! $this->rate_limit_ok() ) {
+            wp_send_json_error( array( 'message' => __( 'Too many requests. Please slow down.', 'wp-travel-machine' ) ), 429 );
+        }
+
+        $vibe = sanitize_text_field( wp_unslash( $_POST['vibe'] ?? '' ) );
+        if ( '' === $vibe ) {
+            wp_send_json_error( array( 'message' => __( 'Describe the style you want (e.g. "luxury beach").', 'wp-travel-machine' ) ) );
+        }
+
+        $prompt = "You are a senior UI designer creating card styles for a travel website. "
+            . "The desired vibe is: '{$vibe}'.\n"
+            . "Design 3 distinct, cohesive, accessible style presets for trip/hotel cards shown on a WHITE background. "
+            . "Each preset has: accent (a vivid brand colour used for price & buttons), "
+            . "titleColor (near-black, high contrast), textColor (muted grey body text, still readable), "
+            . "btnBg (button background — usually equal to accent), btnColor (button text, white or near-white), "
+            . "cardRadius (integer 0-32, px) and gap (integer 8-48, px). "
+            . "Return STRICT JSON: an array of exactly 3 objects with keys "
+            . "name, accent, titleColor, textColor, btnBg, btnColor, cardRadius, gap. "
+            . "All colours as #RRGGBB hex. Output JSON only, no prose.";
+
+        $result = $this->call_api( $prompt, 700 );
+        if ( is_wp_error( $result ) ) {
+            wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+        }
+
+        $presets = $this->parse_style_presets( $result );
+        if ( empty( $presets ) ) {
+            wp_send_json_error( array( 'message' => __( 'Could not generate a style. Try a different description.', 'wp-travel-machine' ) ) );
+        }
+        wp_send_json_success( array( 'presets' => $presets ) );
+    }
+
+    /**
+     * Validate the model's style JSON into safe, bounded presets.
+     *
+     * @param string $text Raw model reply.
+     * @return array<int,array<string,mixed>>
+     */
+    private function parse_style_presets( $text ) {
+        $start = strpos( $text, '[' );
+        $end   = strrpos( $text, ']' );
+        if ( false === $start || false === $end || $end <= $start ) {
+            return array();
+        }
+        $arr = json_decode( substr( $text, $start, $end - $start + 1 ), true );
+        if ( ! is_array( $arr ) ) {
+            return array();
+        }
+
+        $hex = function ( $v, $fallback ) {
+            $v = is_string( $v ) ? trim( $v ) : '';
+            return preg_match( '/^#[0-9a-fA-F]{6}$/', $v ) ? strtolower( $v ) : $fallback;
+        };
+
+        $out = array();
+        foreach ( $arr as $row ) {
+            if ( ! is_array( $row ) ) {
+                continue;
+            }
+            $accent = $hex( $row['accent'] ?? '', '#fd4621' );
+            $out[]  = array(
+                'name'       => sanitize_text_field( (string) ( $row['name'] ?? __( 'Style', 'wp-travel-machine' ) ) ),
+                'accent'     => $accent,
+                'titleColor' => $hex( $row['titleColor'] ?? '', '#1a1410' ),
+                'textColor'  => $hex( $row['textColor'] ?? '', '#44403c' ),
+                'btnBg'      => $hex( $row['btnBg'] ?? '', $accent ),
+                'btnColor'   => $hex( $row['btnColor'] ?? '', '#ffffff' ),
+                'cardRadius' => max( 0, min( 40, (int) ( $row['cardRadius'] ?? 18 ) ) ),
+                'gap'        => max( 0, min( 80, (int) ( $row['gap'] ?? 24 ) ) ),
+            );
+            if ( count( $out ) >= 3 ) {
+                break;
+            }
+        }
+        return $out;
+    }
+
     public function smart_search() {
         check_ajax_referer( 'wptm_ai_nonce', 'nonce' );
-        if ( ! $this->is_enabled() ) {
+        // Natural-language search is available on the free tier.
+        if ( ! $this->is_enabled( 'search' ) ) {
             // Fallback to regular search.
             wp_send_json_success( array( 'mode' => 'standard' ) );
             return;
@@ -621,7 +758,9 @@ class AIEngine {
 
     public function chat() {
         check_ajax_referer( 'wptm_ai_nonce', 'nonce' );
-        if ( ! $this->is_enabled() ) wp_send_json_error( array( 'message' => 'AI chat not available.' ) );
+        // The text chat assistant is available on the free tier; the inline
+        // bookable-card suggestions below are a Pro-only upsell.
+        if ( ! $this->is_enabled( 'chat' ) ) wp_send_json_error( array( 'message' => 'AI chat not available.' ) );
         if ( ! $this->rate_limit_ok() ) wp_send_json_error( array( 'message' => __( 'Too many requests. Please slow down.', 'wp-travel-machine' ) ), 429 );
 
         $message = sanitize_text_field( wp_unslash( $_POST['message'] ?? '' ) );
@@ -630,31 +769,48 @@ class AIEngine {
         }
 
         // Same trip + hotel pool the recommender uses, so the assistant can
-        // suggest real, bookable items by their stable code.
+        // reference (Pro: suggest) real, bookable items by their stable code.
         $candidates = $this->recommend_candidates();
 
-        $prompt = "You are a friendly, concise travel assistant for a booking website. "
-            . "Reply to the visitor in 1-3 short sentences. "
-            . "ONLY if the visitor is browsing for or interested in booking a trip or hotel, also suggest "
-            . "up to 3 matching items from the catalog below by their CODE. "
-            . "For pure questions (visa, weather, general advice), recommend nothing.\n\n"
-            . "Catalog (format: [CODE] Title — type, price, details):\n{$candidates['list']}\n\n"
-            . "Visitor: {$message}\n\n"
-            . "Respond with STRICT JSON only: {\"reply\": \"your message\", \"recommend\": [\"CODE\", ...]}. "
-            . "Use an empty array when nothing relevant fits.";
+        if ( wptm_is_pro() ) {
+            $prompt = "You are a friendly, concise travel assistant for a booking website. "
+                . "Reply to the visitor in 1-3 short sentences. "
+                . "ONLY if the visitor is browsing for or interested in booking a trip or hotel, also suggest "
+                . "up to 3 matching items from the catalog below by their CODE. "
+                . "For pure questions (visa, weather, general advice), recommend nothing.\n\n"
+                . "Catalog (format: [CODE] Title — type, price, details):\n{$candidates['list']}\n\n"
+                . "Visitor: {$message}\n\n"
+                . "Respond with STRICT JSON only: {\"reply\": \"your message\", \"recommend\": [\"CODE\", ...]}. "
+                . "Use an empty array when nothing relevant fits.";
 
-        $result = $this->call_api( $prompt, 500 );
-        if ( is_wp_error( $result ) ) {
-            wp_send_json_error( array( 'message' => $result->get_error_message() ) );
-        }
+            $result = $this->call_api( $prompt, 500 );
+            if ( is_wp_error( $result ) ) {
+                wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+            }
 
-        $data = $this->extract_json( $result );
-        if ( is_array( $data ) ) {
-            $reply = trim( (string) ( $data['reply'] ?? '' ) );
-            $recs  = $this->codes_to_recs( $data['recommend'] ?? array(), $candidates['valid'] );
-            $cards = $recs ? $this->render_recommendation_cards( $recs ) : '';
+            $data = $this->extract_json( $result );
+            if ( is_array( $data ) ) {
+                $reply = trim( (string) ( $data['reply'] ?? '' ) );
+                $recs  = $this->codes_to_recs( $data['recommend'] ?? array(), $candidates['valid'] );
+                $cards = $recs ? $this->render_recommendation_cards( $recs ) : '';
+            } else {
+                // Model ignored the JSON contract — fall back to its raw text reply.
+                $reply = trim( wp_strip_all_tags( (string) $result ) );
+                $cards = '';
+            }
         } else {
-            // Model ignored the JSON contract — fall back to its raw text reply.
+            // Free tier: conversational text only. The model may mention trips by
+            // name for context, but no bookable cards are rendered (Pro upsell).
+            $prompt = "You are a friendly, concise travel assistant for a booking website. "
+                . "Answer the visitor's message helpfully in 1-3 short sentences. "
+                . "You may mention relevant trips or hotels by name from this list, but do not invent details.\n\n"
+                . "Trips & hotels:\n{$candidates['list']}\n\n"
+                . "Visitor: {$message}";
+
+            $result = $this->call_api( $prompt, 400 );
+            if ( is_wp_error( $result ) ) {
+                wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+            }
             $reply = trim( wp_strip_all_tags( (string) $result ) );
             $cards = '';
         }

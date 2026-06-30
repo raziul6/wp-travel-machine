@@ -24,23 +24,59 @@ class Pro {
     /**
      * Feature comparison rows for the upgrade table: [ label, in_free, in_pro ].
      *
+     * A row with both flags set to null is a category header (rendered as a
+     * full-width band by admin/views/pro.php).
+     *
      * @return array
      */
     public static function comparison() {
+        $cat  = function ( $label ) { return array( $label, null, null ); };
+        $free = function ( $label ) { return array( $label, true, true ); };
+        $pro  = function ( $label ) { return array( $label, false, true ); };
+
         return array(
-            array( __( 'Trips & Hotels — itineraries, pricing tiers, gallery, FAQ', 'wp-travel-machine' ), true, true ),
-            array( __( 'Search, filters & pagination', 'wp-travel-machine' ), true, true ),
-            array( __( 'Reviews, Wishlist & Compare', 'wp-travel-machine' ), true, true ),
-            array( __( 'Gutenberg blocks & Elementor widgets', 'wp-travel-machine' ), true, true ),
-            array( __( 'Manual / Bank Transfer payments', 'wp-travel-machine' ), true, true ),
-            array( __( 'Booking management, drawer & emails', 'wp-travel-machine' ), true, true ),
-            array( __( 'AI Trip Builder — write whole trips in one click', 'wp-travel-machine' ), false, true ),
-            array( __( 'AI customer-reply drafting in the booking screen', 'wp-travel-machine' ), false, true ),
-            array( __( 'AI concierge chat, recommendations & natural-language search', 'wp-travel-machine' ), false, true ),
-            array( __( 'Stripe & PayPal online checkout', 'wp-travel-machine' ), false, true ),
-            array( __( 'Printable, branded invoices', 'wp-travel-machine' ), false, true ),
-            array( __( 'Coupons & discounts', 'wp-travel-machine' ), false, true ),
-            array( __( 'Pickup points — free or paid, per traveler', 'wp-travel-machine' ), false, true ),
+            $cat( __( 'Content', 'wp-travel-machine' ) ),
+            $free( __( 'Trips & Hotels — itinerary, pricing tiers, gallery, FAQ, map', 'wp-travel-machine' ) ),
+            $free( __( 'Unlimited trips, hotels & bookings', 'wp-travel-machine' ) ),
+            $free( __( 'Taxonomies — destinations, activities, types, facilities', 'wp-travel-machine' ) ),
+            $free( __( 'Reviews & star ratings', 'wp-travel-machine' ) ),
+            $free( __( 'Single pages — gallery + lightbox, map, sticky booking bar', 'wp-travel-machine' ) ),
+            $free( __( 'Related trips / hotels', 'wp-travel-machine' ) ),
+
+            $cat( __( 'Booking engine', 'wp-travel-machine' ) ),
+            $free( __( 'Availability calendar — date-range & single date', 'wp-travel-machine' ) ),
+            $free( __( 'Pricing tiers (Adult/Child/…) & taxes', 'wp-travel-machine' ) ),
+            $free( __( 'Session-less cart & server-side price validation', 'wp-travel-machine' ) ),
+            $pro( __( 'Coupons / discount codes', 'wp-travel-machine' ) ),
+            $pro( __( 'Pickup points — priced add-on at checkout', 'wp-travel-machine' ) ),
+
+            $cat( __( 'Payments', 'wp-travel-machine' ) ),
+            $free( __( 'Manual / bank transfer', 'wp-travel-machine' ) ),
+            $pro( __( 'Stripe (cards, SCA / 3-D Secure)', 'wp-travel-machine' ) ),
+            $pro( __( 'PayPal', 'wp-travel-machine' ) ),
+            $pro( __( 'Razorpay', 'wp-travel-machine' ) ),
+            $pro( __( 'Printable invoices + company details', 'wp-travel-machine' ) ),
+
+            $cat( __( 'Display & page building', 'wp-travel-machine' ) ),
+            $free( __( 'Shortcodes, Gutenberg blocks & Elementor widgets', 'wp-travel-machine' ) ),
+            $free( __( 'Grid / List layout + style controls', 'wp-travel-machine' ) ),
+            $free( __( 'Search form, AJAX filters & pagination', 'wp-travel-machine' ) ),
+            $free( __( 'Wishlist, Compare & enquiry form', 'wp-travel-machine' ) ),
+
+            $cat( __( 'System & admin', 'wp-travel-machine' ) ),
+            $free( __( 'Dashboard, bookings management & reports', 'wp-travel-machine' ) ),
+            $free( __( 'Branded emails, demo importer & setup wizard', 'wp-travel-machine' ) ),
+            $free( __( 'SEO schema, REST API & developer hooks', 'wp-travel-machine' ) ),
+
+            $cat( __( 'AI — runs on your own provider API key', 'wp-travel-machine' ) ),
+            $free( __( 'Natural-language search', 'wp-travel-machine' ) ),
+            $free( __( 'Chat assistant — conversational text replies', 'wp-travel-machine' ) ),
+            $pro( __( 'Chat — inline bookable trip/hotel cards', 'wp-travel-machine' ) ),
+            $pro( __( 'Smart recommendations — bookable cards + score', 'wp-travel-machine' ) ),
+            $pro( __( 'AI Trip Builder — write a whole trip in one click', 'wp-travel-machine' ) ),
+            $pro( __( 'AI itinerary generator', 'wp-travel-machine' ) ),
+            $pro( __( 'AI customer-reply drafting', 'wp-travel-machine' ) ),
+            $pro( __( 'AI Style generator (blocks & Elementor)', 'wp-travel-machine' ) ),
         );
     }
 

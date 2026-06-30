@@ -17,6 +17,8 @@
     var RangeControl = components.RangeControl;
     var SelectControl = components.SelectControl;
     var TextControl = components.TextControl;
+    var Button = components.Button;
+    var useState = element.useState;
     var __ = i18n.__;
     var ServerSideRender = serverSideRender;
 
@@ -32,11 +34,75 @@
         align: { type: 'string', default: '' }
     };
 
-    /* The reusable Style panels (Layout + Colors). */
+    /* AI style generator: vibe → 3 cohesive presets that fill the style controls. */
+    function AIStylePanel(props) {
+        var set = props.setAttributes;
+        var cfg = window.wptmBlocks || {};
+        var vibeS = useState(''), vibe = vibeS[0], setVibe = vibeS[1];
+        var busyS = useState(false), busy = busyS[0], setBusy = busyS[1];
+        var errS = useState(''), err = errS[0], setErr = errS[1];
+        var presetsS = useState([]), presets = presetsS[0], setPresets = presetsS[1];
+
+        if (!cfg.isPro) {
+            return el(PanelBody, { title: __('AI Style', 'wp-travel-machine'), initialOpen: false, key: 'aistyle' },
+                el('p', { className: 'wptm-blk-ai__note' }, __('Generate a cohesive card style with AI — available in Pro (enable AI under Settings → AI Features).', 'wp-travel-machine'))
+            );
+        }
+
+        function applyPreset(p) {
+            set({ accent: p.accent, titleColor: p.titleColor, textColor: p.textColor, btnBg: p.btnBg, btnColor: p.btnColor, cardRadius: p.cardRadius, gap: p.gap });
+        }
+
+        function generate() {
+            var v = (vibe || '').trim();
+            if (!v) { setErr(__('Describe a style first.', 'wp-travel-machine')); return; }
+            setErr(''); setBusy(true); setPresets([]);
+            var body = new window.FormData();
+            body.append('action', 'wptm_ai_generate_style');
+            body.append('nonce', cfg.nonce);
+            body.append('vibe', v);
+            window.fetch(cfg.ajaxUrl, { method: 'POST', credentials: 'same-origin', body: body })
+                .then(function (r) { return r.json(); })
+                .then(function (r) {
+                    setBusy(false);
+                    if (r && r.success && r.data && r.data.presets && r.data.presets.length) {
+                        setPresets(r.data.presets);
+                    } else {
+                        setErr((r && r.data && r.data.message) ? r.data.message : __('Could not generate a style.', 'wp-travel-machine'));
+                    }
+                })
+                .catch(function () { setBusy(false); setErr(__('Request failed. Please try again.', 'wp-travel-machine')); });
+        }
+
+        var children = [
+            el(TextControl, { key: 'vibe', label: __('Describe a style', 'wp-travel-machine'), placeholder: __('e.g. luxury beach, minimal, vibrant tropical', 'wp-travel-machine'), value: vibe, onChange: setVibe }),
+            el(Button, { key: 'gen', variant: 'primary', onClick: generate, isBusy: busy, disabled: busy }, busy ? __('Generating…', 'wp-travel-machine') : __('✨ Generate styles', 'wp-travel-machine'))
+        ];
+        if (err) { children.push(el('p', { key: 'err', className: 'wptm-blk-ai__err' }, err)); }
+        if (presets.length) {
+            children.push(el('p', { key: 'hint', className: 'wptm-blk-ai__hint' }, __('Click a palette to apply:', 'wp-travel-machine')));
+            children.push(el('div', { key: 'list', className: 'wptm-blk-ai__presets' },
+                presets.map(function (p, i) {
+                    return el('button', { key: 'p' + i, type: 'button', className: 'wptm-blk-ai__preset', title: p.name, onClick: function () { applyPreset(p); } },
+                        el('span', { className: 'wptm-blk-ai__sw' },
+                            ['accent', 'titleColor', 'textColor', 'btnBg'].map(function (k) {
+                                return el('i', { key: k, style: { background: p[k] } });
+                            })
+                        ),
+                        el('span', { className: 'wptm-blk-ai__name' }, p.name)
+                    );
+                })
+            ));
+        }
+        return el(PanelBody, { title: __('AI Style', 'wp-travel-machine'), initialOpen: false, key: 'aistyle' }, children);
+    }
+
+    /* The reusable Style panels (AI + Layout + Colors). */
     function stylePanels(props) {
         var a = props.attributes;
         var set = props.setAttributes;
         return [
+            el(AIStylePanel, Object.assign({ key: 'aistyle' }, props)),
             el(PanelBody, { title: __('Layout & Spacing', 'wp-travel-machine'), initialOpen: false, key: 'layout' },
                 el(SelectControl, {
                     label: __('Alignment', 'wp-travel-machine'),
@@ -107,7 +173,15 @@
         var a = props.attributes, set = props.setAttributes;
         var rows = [
             el(RangeControl, { key: 'count', label: __('Number of items', 'wp-travel-machine'), value: a.count, onChange: function (v) { set({ count: v }); }, min: 1, max: 24 }),
-            el(RangeControl, { key: 'cols', label: __('Columns', 'wp-travel-machine'), value: a.columns, onChange: function (v) { set({ columns: v }); }, min: 1, max: 4 }),
+            el(SelectControl, {
+                key: 'layout', label: __('Layout', 'wp-travel-machine'), value: a.layout || 'grid',
+                options: [
+                    { label: __('Grid', 'wp-travel-machine'), value: 'grid' },
+                    { label: __('List', 'wp-travel-machine'), value: 'list' }
+                ],
+                onChange: function (v) { set({ layout: v }); }
+            }),
+            el(RangeControl, { key: 'cols', label: __('Columns (grid)', 'wp-travel-machine'), value: a.columns, onChange: function (v) { set({ columns: v }); }, min: 1, max: 4, disabled: a.layout === 'list' }),
             el(SelectControl, { key: 'orderby', label: __('Order By', 'wp-travel-machine'), value: a.orderby, options: orderByOptions, onChange: function (v) { set({ orderby: v }); } }),
             el(SelectControl, { key: 'order', label: __('Order', 'wp-travel-machine'), value: a.order, options: orderOptions, onChange: function (v) { set({ order: v }); } }),
             el(TextControl, { key: 'dest', label: __('Destination slug (optional)', 'wp-travel-machine'), value: a.destination, onChange: function (v) { set({ destination: v }); } })
@@ -127,6 +201,7 @@
         attributes: {
             count: { type: 'number', default: 6 },
             columns: { type: 'number', default: 3 },
+            layout: { type: 'string', default: 'grid' },
             orderby: { type: 'string', default: 'date' },
             order: { type: 'string', default: 'DESC' },
             destination: { type: 'string', default: '' },
@@ -144,6 +219,7 @@
         attributes: {
             count: { type: 'number', default: 6 },
             columns: { type: 'number', default: 3 },
+            layout: { type: 'string', default: 'grid' },
             orderby: { type: 'string', default: 'date' },
             order: { type: 'string', default: 'DESC' },
             destination: { type: 'string', default: '' }

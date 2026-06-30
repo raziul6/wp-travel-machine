@@ -79,7 +79,6 @@ $wptm_page_field = function ( $option_key ) use ( $all_pages ) {
                     </div>
                 </div>
 
-                <?php if ( wptm_is_pro() ) : ?>
                 <div class="wptm-nav-group">
                     <button type="button" class="wptm-nav-group__head">
                         <span class="dashicons dashicons-superhero"></span>
@@ -90,7 +89,6 @@ $wptm_page_field = function ( $option_key ) use ( $all_pages ) {
                         <a class="wptm-nav-item" data-panel="ai"><?php esc_html_e( 'AI Configuration', 'wp-travel-machine' ); ?></a>
                     </div>
                 </div>
-                <?php endif; ?>
 
                 <div class="wptm-nav-group">
                     <button type="button" class="wptm-nav-group__head">
@@ -562,10 +560,22 @@ $wptm_page_field = function ( $option_key ) use ( $all_pages ) {
                     </div>
                 </section>
 
-                <?php if ( wptm_is_pro() ) : ?>
                 <!-- Panel: AI -->
                 <section class="wptm-settings-panel" data-panel="ai">
                     <h2 class="wptm-panel-title"><?php esc_html_e( 'AI Configuration', 'wp-travel-machine' ); ?></h2>
+
+                    <div class="wptm-field">
+                        <div class="wptm-field__label"><label><?php esc_html_e( 'Available features', 'wp-travel-machine' ); ?></label></div>
+                        <div class="wptm-field__control">
+                            <p class="wptm-field__desc" style="margin-top:2px">
+                                <strong><?php esc_html_e( 'Free:', 'wp-travel-machine' ); ?></strong>
+                                <?php esc_html_e( 'Natural-language search · Chat assistant (text replies).', 'wp-travel-machine' ); ?><br>
+                                <strong><?php esc_html_e( 'Pro:', 'wp-travel-machine' ); ?></strong>
+                                <?php esc_html_e( 'AI Trip Builder · Smart recommendations & in-chat bookable cards · Itinerary generator · AI customer replies.', 'wp-travel-machine' ); ?>
+                                <?php if ( ! wptm_is_pro() ) : ?><br><em><?php esc_html_e( 'Uses your own provider API key. Upgrade to Pro to unlock the rest.', 'wp-travel-machine' ); ?></em><?php endif; ?>
+                            </p>
+                        </div>
+                    </div>
 
                     <div class="wptm-field">
                         <div class="wptm-field__label"><label><?php esc_html_e( 'Enable AI', 'wp-travel-machine' ); ?></label></div>
@@ -574,7 +584,7 @@ $wptm_page_field = function ( $option_key ) use ( $all_pages ) {
                                 <input type="checkbox" name="settings[wptm_enable_ai]" value="1" <?php checked( get_option( 'wptm_enable_ai' ) ); ?>>
                                 <span class="wptm-switch__slider"></span>
                             </label>
-                            <p class="wptm-field__desc"><?php esc_html_e( 'Enable AI-powered recommendations and the trip assistant.', 'wp-travel-machine' ); ?></p>
+                            <p class="wptm-field__desc"><?php esc_html_e( 'Enable AI-powered search and the trip assistant.', 'wp-travel-machine' ); ?></p>
                         </div>
                     </div>
 
@@ -614,7 +624,6 @@ $wptm_page_field = function ( $option_key ) use ( $all_pages ) {
                         </div>
                     </div>
                 </section>
-                <?php endif; ?>
 
                 <!-- Panel: Email -->
                 <section class="wptm-settings-panel" data-panel="email">

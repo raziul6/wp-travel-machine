@@ -54,6 +54,7 @@ class BlocksLoader {
 		$grid_content = array(
 			'count'   => array( 'type' => 'number', 'default' => 6 ),
 			'columns' => array( 'type' => 'number', 'default' => 3 ),
+			'layout'  => array( 'type' => 'string', 'default' => 'grid' ),
 			'orderby' => array( 'type' => 'string', 'default' => 'date' ),
 			'order'   => array( 'type' => 'string', 'default' => 'DESC' ),
 		);
@@ -129,6 +130,13 @@ class BlocksLoader {
 			$ver,
 			true
 		);
+
+		// Data for the in-editor AI style generator.
+		wp_localize_script( 'wptm-blocks', 'wptmBlocks', array(
+			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+			'nonce'   => wp_create_nonce( 'wptm_ai_nonce' ),
+			'isPro'   => function_exists( 'wptm_is_pro' ) && wptm_is_pro() && (bool) get_option( 'wptm_enable_ai', false ) && ! empty( get_option( 'wptm_ai_api_key', '' ) ),
+		) );
 
 		// The front-end stylesheet powers the editor preview (ServerSideRender).
 		$css = WPTM_PLUGIN_DIR . 'assets/css/public.css';

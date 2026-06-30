@@ -161,7 +161,9 @@ class Shortcodes {
     }
 
     public function ai_recommend( $atts ) {
-        if ( ! get_option( 'wptm_enable_ai' ) ) return '';
+        // Smart recommendations (bookable cards) are a Pro feature; the chat
+        // assistant covers the free tier.
+        if ( ! get_option( 'wptm_enable_ai' ) || ! wptm_is_pro() ) return '';
         $atts = shortcode_atts( array(
             'title' => __( 'Find your perfect trip', 'wp-travel-machine' ),
         ), $atts, 'wptm_ai_recommend' );

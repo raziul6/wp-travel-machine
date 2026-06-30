@@ -49,6 +49,37 @@
 @media(max-width:1024px) { .wptm-grid-4,.wptm-grid-3 { grid-template-columns: repeat(2,1fr); } }
 @media(max-width:640px) { .wptm-grid-2,.wptm-grid-3,.wptm-grid-4 { grid-template-columns: 1fr; } }
 
+/* List layout (block/widget "List" option) — horizontal cards, one per row. */
+.wptm-grid--list { grid-template-columns: 1fr; }
+.wptm-grid--list .wptm-trip-card,
+.wptm-grid--list .wptm-hotel-card { flex-direction: row; }
+.wptm-grid--list .wptm-trip-card__image,
+.wptm-grid--list .wptm-hotel-card__image { flex: none; width: 38%; max-width: 340px; height: auto; min-height: 220px; }
+.wptm-grid--list .wptm-trip-card__body,
+.wptm-grid--list .wptm-hotel-card__body { flex: 1; }
+.wptm-grid--list .wptm-trip-card:hover,
+.wptm-grid--list .wptm-hotel-card:hover { transform: none; }
+@media(max-width:640px) {
+    .wptm-grid--list .wptm-trip-card,
+    .wptm-grid--list .wptm-hotel-card { flex-direction: column; }
+    .wptm-grid--list .wptm-trip-card__image,
+    .wptm-grid--list .wptm-hotel-card__image { width: 100%; max-width: none; height: 200px; min-height: 0; }
+}
+
+/* AI Style generator panel (block editor inspector). */
+.wptm-blk-ai__note { font-size: 12px; color: #757575; margin: 4px 0 0; }
+.wptm-blk-ai__err { font-size: 12px; color: #cc1818; margin: 8px 0 0; }
+.wptm-blk-ai__hint { font-size: 12px; color: #757575; margin: 12px 0 6px; }
+.wptm-blk-ai__presets { display: flex; flex-direction: column; gap: 8px; }
+.wptm-blk-ai__preset {
+    display: flex; align-items: center; gap: 10px; width: 100%; cursor: pointer;
+    background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 8px 10px; text-align: left;
+}
+.wptm-blk-ai__preset:hover { border-color: #1e1e1e; }
+.wptm-blk-ai__sw { display: inline-flex; flex: none; border-radius: 6px; overflow: hidden; box-shadow: 0 0 0 1px rgba(0,0,0,.06); }
+.wptm-blk-ai__sw i { width: 18px; height: 26px; display: block; }
+.wptm-blk-ai__name { font-size: 12.5px; font-weight: 600; color: #1e1e1e; }
+
 /* ═══ Premium Trip Card ═══ */
 .wptm-trip-card {
     background: var(--wptm-white);

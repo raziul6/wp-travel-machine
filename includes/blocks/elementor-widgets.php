@@ -46,11 +46,50 @@ abstract class Base extends Widget_Base {
 	/**
 	 * Register the shared Style tab section.
 	 */
+	/**
+	 * Whether the AI Style generator is available (Pro + AI configured).
+	 *
+	 * @return bool
+	 */
+	public static function ai_style_enabled() {
+		return function_exists( 'wptm_is_pro' ) && wptm_is_pro()
+			&& (bool) get_option( 'wptm_enable_ai', false )
+			&& ! empty( get_option( 'wptm_ai_api_key', '' ) );
+	}
+
+	/**
+	 * Markup for the in-panel AI Style generator (driven by elementor-ai.js).
+	 *
+	 * @return string
+	 */
+	protected function ai_style_markup() {
+		ob_start();
+		?>
+		<div class="wptm-el-ai">
+			<div class="wptm-el-ai__title">✨ <?php esc_html_e( 'AI Style', 'wp-travel-machine' ); ?></div>
+			<input type="text" class="wptm-el-ai__vibe" placeholder="<?php esc_attr_e( 'e.g. luxury beach, minimal, vibrant tropical', 'wp-travel-machine' ); ?>">
+			<button type="button" class="wptm-el-ai__gen"><?php esc_html_e( 'Generate styles', 'wp-travel-machine' ); ?></button>
+			<div class="wptm-el-ai__msg" style="display:none"></div>
+			<div class="wptm-el-ai__presets"></div>
+		</div>
+		<?php
+		return ob_get_clean();
+	}
+
 	protected function add_style_section() {
 		$this->start_controls_section( 'wptm_style', array(
 			'label' => __( 'Style', 'wp-travel-machine' ),
 			'tab'   => Controls_Manager::TAB_STYLE,
 		) );
+
+		// AI Style generator (Pro): fills the colour/radius/gap controls below.
+		if ( self::ai_style_enabled() ) {
+			$this->add_control( 'wptm_ai_style', array(
+				'type'            => Controls_Manager::RAW_HTML,
+				'raw'             => $this->ai_style_markup(),
+				'content_classes' => 'wptm-el-ai-control',
+			) );
+		}
 
 		$this->add_control( 'align', array(
 			'label'   => __( 'Alignment', 'wp-travel-machine' ),
@@ -126,11 +165,18 @@ abstract class Base extends Widget_Base {
 			'type'    => Controls_Manager::NUMBER,
 			'default' => 6, 'min' => 1, 'max' => 48,
 		) );
-		$this->add_control( 'columns', array(
-			'label'   => __( 'Columns', 'wp-travel-machine' ),
+		$this->add_control( 'layout', array(
+			'label'   => __( 'Layout', 'wp-travel-machine' ),
 			'type'    => Controls_Manager::SELECT,
-			'default' => '3',
-			'options' => array( '1' => '1', '2' => '2', '3' => '3', '4' => '4' ),
+			'default' => 'grid',
+			'options' => array( 'grid' => __( 'Grid', 'wp-travel-machine' ), 'list' => __( 'List', 'wp-travel-machine' ) ),
+		) );
+		$this->add_control( 'columns', array(
+			'label'     => __( 'Columns', 'wp-travel-machine' ),
+			'type'      => Controls_Manager::SELECT,
+			'default'   => '3',
+			'options'   => array( '1' => '1', '2' => '2', '3' => '3', '4' => '4' ),
+			'condition' => array( 'layout' => 'grid' ),
 		) );
 		$this->add_control( 'orderby', array(
 			'label'   => __( 'Order By', 'wp-travel-machine' ),
@@ -184,6 +230,7 @@ class Trip_Grid extends Base {
 		echo Renderer::trips( array_merge( $this->style_atts( $s ), array(
 			'count'       => $s['count'] ?? 6,
 			'columns'     => $s['columns'] ?? 3,
+				'layout'      => $s['layout'] ?? 'grid',
 			'orderby'     => $s['orderby'] ?? 'date',
 			'order'       => $s['order'] ?? 'DESC',
 			'destination' => $s['destination'] ?? '',
@@ -217,6 +264,7 @@ class Hotel_Grid extends Base {
 		echo Renderer::hotels( array_merge( $this->style_atts( $s ), array(
 			'count'       => $s['count'] ?? 6,
 			'columns'     => $s['columns'] ?? 3,
+				'layout'      => $s['layout'] ?? 'grid',
 			'orderby'     => $s['orderby'] ?? 'date',
 			'order'       => $s['order'] ?? 'DESC',
 			'destination' => $s['destination'] ?? '',

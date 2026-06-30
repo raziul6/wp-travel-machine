@@ -26,6 +26,7 @@ class Renderer {
 			// Content.
 			'count'       => 6,
 			'columns'     => 3,
+			'layout'      => 'grid',       // grid | list.
 			'destination' => '',
 			'activity'    => '',
 			'orderby'     => 'date',
@@ -57,6 +58,7 @@ class Renderer {
 
 		$a['count']       = max( 1, min( 48, (int) $a['count'] ) );
 		$a['columns']     = max( 1, min( 4, (int) $a['columns'] ) );
+		$a['layout']      = in_array( $a['layout'], array( 'grid', 'list' ), true ) ? $a['layout'] : 'grid';
 		$a['destination'] = sanitize_title( $a['destination'] );
 		$a['activity']    = sanitize_title( $a['activity'] );
 		$a['orderby']     = in_array( $a['orderby'], array( 'date', 'title', 'price', 'rand', 'menu_order' ), true ) ? $a['orderby'] : 'date';
@@ -214,7 +216,9 @@ class Renderer {
 	 */
 	private static function grid( $type, $a, $args, $partial, $empty ) {
 		$q          = new \WP_Query( $args );
-		$grid_class = 'wptm-grid wptm-grid-' . (int) $a['columns'];
+		$grid_class = 'list' === $a['layout']
+			? 'wptm-grid wptm-grid--list'
+			: 'wptm-grid wptm-grid-' . (int) $a['columns'];
 		if ( $a['paginate'] ) {
 			$grid_class .= ' wptm-search-results';
 		}
