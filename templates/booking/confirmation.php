@@ -19,7 +19,7 @@ $my_bookings = wptm_get_page_url( 'my_bookings' );
 <div style="max-width:700px;margin:60px auto;padding:0 20px;text-align:center;">
     <?php if ( $booking ) : ?>
         <div style="font-size:64px;margin-bottom:16px;"><?php echo ( $is_unpaid && $is_manual ) ? '📝' : '✅'; ?></div>
-        <h1 style="font-family:'Sora',sans-serif;font-size:32px;font-weight:800;margin-bottom:12px;">
+        <h1 style="font-family:var(--wptm-font-display);font-size:32px;font-weight:700;margin-bottom:12px;">
             <?php echo ( $is_unpaid && $is_manual ) ? esc_html__( 'Order Received!', 'wp-travel-machine' ) : esc_html__( 'Booking Confirmed!', 'wp-travel-machine' ); ?>
         </h1>
         <p style="font-size:16px;color:#64748b;margin-bottom:32px;"><?php esc_html_e( 'Thank you for your booking. A confirmation email is on its way.', 'wp-travel-machine' ); ?></p>
@@ -33,7 +33,7 @@ $my_bookings = wptm_get_page_url( 'my_bookings' );
                 <div><strong><?php esc_html_e( 'Check-in', 'wp-travel-machine' ); ?></strong><br><?php echo esc_html( $booking->check_in ?: '—' ); ?></div>
                 <div><strong><?php esc_html_e( 'Check-out', 'wp-travel-machine' ); ?></strong><br><?php echo esc_html( $booking->check_out ?: '—' ); ?></div>
                 <div><strong><?php esc_html_e( 'Travelers', 'wp-travel-machine' ); ?></strong><br><?php echo intval( $booking->travelers_count ); ?></div>
-                <div><strong><?php esc_html_e( 'Total', 'wp-travel-machine' ); ?></strong><br><span style="font-size:20px;font-weight:800;color:#fd4621;"><?php echo esc_html( $sym . number_format( $booking->total_price, 2 ) ); ?></span></div>
+                <div><strong><?php esc_html_e( 'Total', 'wp-travel-machine' ); ?></strong><br><span style="font-size:20px;font-weight:700;color:#fd4621;"><?php echo esc_html( $sym . number_format( $booking->total_price, 2 ) ); ?></span></div>
             </div>
         </div>
 

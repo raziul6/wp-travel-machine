@@ -151,6 +151,16 @@ class Admin {
         $css_ver  = file_exists( $css_path ) ? filemtime( $css_path ) : WPTM_VERSION;
         $js_ver   = file_exists( $js_path ) ? filemtime( $js_path ) : WPTM_VERSION;
 
+        // Self-hosted Inter font (no external/CDN request), shared with the front end.
+        if ( apply_filters( 'wptm_enqueue_fonts', true ) ) {
+            $fonts_path = WPTM_PLUGIN_DIR . 'assets/vendor/fonts/fonts.css';
+            $fonts_url  = apply_filters( 'wptm_fonts_url', WPTM_PLUGIN_URL . 'assets/vendor/fonts/fonts.css' );
+            if ( $fonts_url ) {
+                $fonts_ver = file_exists( $fonts_path ) ? filemtime( $fonts_path ) : WPTM_VERSION;
+                wp_enqueue_style( 'wptm-fonts', $fonts_url, array(), $fonts_ver );
+            }
+        }
+
         wp_enqueue_style( 'wptm-admin', WPTM_PLUGIN_URL . 'assets/css/admin.css', array( 'dashicons' ), $css_ver );
         wp_enqueue_script( 'wptm-admin', WPTM_PLUGIN_URL . 'assets/js/admin/admin.js', array(), $js_ver, true );
         wp_localize_script( 'wptm-admin', 'wptmAdmin', array(

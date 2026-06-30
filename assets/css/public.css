@@ -26,8 +26,8 @@
     --wptm-shadow: 0 4px 6px -1px rgba(26,20,16,.07),0 2px 4px -2px rgba(26,20,16,.05);
     --wptm-shadow-lg: 0 24px 40px -12px rgba(26,20,16,.16),0 8px 16px -8px rgba(26,20,16,.08);
     --wptm-shadow-brand: 0 12px 28px rgba(253,70,33,.32);
-    --wptm-font: 'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-    --wptm-font-display: 'Sora','Plus Jakarta Sans',sans-serif;
+    --wptm-font: 'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --wptm-font-display: 'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 }
 
 /* Base typography for plugin-rendered regions */
@@ -70,7 +70,7 @@
     position: absolute; top: 14px; left: 14px; z-index: 2;
     background: var(--wptm-ribbon-discount);
     color: #fff; padding: 5px 12px; border-radius: 999px;
-    font-size: 11px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase;
+    font-size: 11px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase;
     box-shadow: 0 4px 12px rgba(0,0,0,.18);
 }
 /* Featured ribbon (trips & hotels) */
@@ -79,7 +79,7 @@
     display: inline-flex; align-items: center; gap: 4px;
     background: var(--wptm-ribbon-featured);
     color: #fff; padding: 5px 12px; border-radius: 999px;
-    font-size: 11px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase;
+    font-size: 11px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase;
     box-shadow: 0 4px 12px rgba(0,0,0,.18);
 }
 /* Keep the wishlist button clear of a featured ribbon. */
@@ -95,7 +95,7 @@
 .wptm-trip-card__wishlist:hover, .wptm-trip-card__wishlist.active { background: var(--wptm-danger); color: #fff; }
 .wptm-trip-card__body { padding: 18px 20px 20px; display: flex; flex-direction: column; flex: 1; }
 .wptm-trip-card__title {
-    font-family: var(--wptm-font-display); font-size: 19px; font-weight: 800; letter-spacing: -.015em;
+    font-family: var(--wptm-font-display); font-size: 19px; font-weight: 700; letter-spacing: -.015em;
     color: var(--wptm-dark); margin: 0 0 12px; line-height: 1.32;
 }
 .wptm-trip-card__title a { color: inherit; text-decoration: none; transition: color .2s; }
@@ -103,7 +103,7 @@
 .wptm-trip-card__meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
 .wptm-trip-card__meta span {
     display: inline-flex; align-items: center; gap: 5px;
-    font-size: 12.5px; font-weight: 600; color: var(--wptm-muted);
+    font-size: 12.5px; font-weight: 500; color: var(--wptm-muted);
     background: var(--wptm-bg); border: 1px solid var(--wptm-border);
     padding: 4px 10px; border-radius: 999px;
 }
@@ -112,7 +112,7 @@
     padding-top: 14px; border-top: 1px solid var(--wptm-border);
 }
 .wptm-trip-card__price { font-family: var(--wptm-font-display); line-height: 1.1; }
-.wptm-trip-card__price .amount { font-size: 24px; font-weight: 800; color: var(--wptm-primary); letter-spacing: -.02em; }
+.wptm-trip-card__price .amount { font-size: 24px; font-weight: 700; color: var(--wptm-primary); letter-spacing: -.02em; }
 .wptm-trip-card__price .old-price { text-decoration: line-through; color: var(--wptm-muted); font-size: 14px; margin-right: 6px; }
 .wptm-trip-card__price .per { font-size: 12px; color: var(--wptm-muted); }
 
@@ -135,24 +135,24 @@
     box-shadow: 0 4px 12px rgba(0,0,0,.14);
 }
 .wptm-hotel-card__body { padding: 18px 20px 20px; display: flex; flex-direction: column; flex: 1; }
-.wptm-hotel-card__title { font-family: var(--wptm-font-display); font-size: 19px; font-weight: 800; letter-spacing: -.015em; color: var(--wptm-dark); margin: 0 0 8px; line-height: 1.32; }
+.wptm-hotel-card__title { font-family: var(--wptm-font-display); font-size: 19px; font-weight: 700; letter-spacing: -.015em; color: var(--wptm-dark); margin: 0 0 8px; line-height: 1.32; }
 .wptm-hotel-card__title a { color: inherit; text-decoration: none; transition: color .2s; }
 .wptm-hotel-card__title a:hover { color: var(--wptm-primary); }
 .wptm-hotel-card__location {
-    font-size: 12.5px; font-weight: 600; color: var(--wptm-muted); margin-bottom: 14px;
+    font-size: 12.5px; font-weight: 500; color: var(--wptm-muted); margin-bottom: 14px;
     display: inline-flex; align-items: center; gap: 5px;
     background: var(--wptm-bg); border: 1px solid var(--wptm-border); padding: 4px 10px; border-radius: 999px; align-self: flex-start;
 }
 .wptm-hotel-card__footer { margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 14px; border-top: 1px solid var(--wptm-border); }
 .wptm-hotel-card__price { font-family: var(--wptm-font-display); line-height: 1.1; }
-.wptm-hotel-card__price .amount { font-size: 22px; font-weight: 800; color: var(--wptm-primary); letter-spacing: -.02em; }
+.wptm-hotel-card__price .amount { font-size: 22px; font-weight: 700; color: var(--wptm-primary); letter-spacing: -.02em; }
 .wptm-hotel-card__price .per { font-size: 12px; color: var(--wptm-muted); }
 
 /* Buttons */
 .wptm-btn {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 12px 24px; border: none; border-radius: var(--wptm-radius-sm);
-    font-size: 14px; font-weight: 600; font-family: var(--wptm-font);
+    font-size: 14px; font-weight: 500; font-family: var(--wptm-font);
     cursor: pointer; transition: all .25s; text-decoration: none;
 }
 .wptm-btn--primary { background: linear-gradient(135deg,var(--wptm-primary),var(--wptm-primary-light)); color: #fff; }
@@ -171,7 +171,7 @@
 .wptm-search-form.horizontal .wptm-search-fields { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
 .wptm-search-form.vertical .wptm-search-fields { display: flex; flex-direction: column; gap: 16px; }
 .wptm-search-field { flex: 1; min-width: 160px; }
-.wptm-search-field label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--wptm-muted); margin-bottom: 6px; }
+.wptm-search-field label { display: block; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: .5px; color: var(--wptm-muted); margin-bottom: 6px; }
 .wptm-search-field input,
 .wptm-search-field select {
     width: 100%; padding: 12px 16px; border: 1px solid var(--wptm-border);
@@ -183,7 +183,7 @@
 .wptm-search-field--submit { flex: 0; }
 .wptm-search-range { display: flex; align-items: center; gap: 6px; }
 .wptm-search-range input { width: 100%; min-width: 70px; }
-.wptm-search-range__sep { color: var(--wptm-muted); font-weight: 600; }
+.wptm-search-range__sep { color: var(--wptm-muted); font-weight: 500; }
 
 /* Booking Form */
 .wptm-booking-form {
@@ -191,9 +191,9 @@
     padding: 28px; box-shadow: var(--wptm-shadow-lg); border: 1px solid var(--wptm-border);
 }
 .wptm-booking-form__header { margin-bottom: 20px; }
-.wptm-booking-form__header h3 { font-family: var(--wptm-font-display); font-size: 20px; font-weight: 700; margin: 0; }
+.wptm-booking-form__header h3 { font-family: var(--wptm-font-display); font-size: 20px; font-weight: 600; margin: 0; }
 .wptm-booking-form .wptm-form-group { margin-bottom: 16px; }
-.wptm-booking-form .wptm-form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--wptm-text); }
+.wptm-booking-form .wptm-form-group label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: var(--wptm-text); }
 .wptm-booking-form .wptm-form-group input,
 .wptm-booking-form .wptm-form-group select,
 .wptm-booking-form .wptm-form-group textarea {
@@ -206,7 +206,7 @@
 .wptm-booking-form .wptm-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .wptm-booking-form__summary { background: var(--wptm-bg); border-radius: var(--wptm-radius-sm); padding: 16px; margin: 20px 0; }
 .wptm-booking-form__summary .line { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; }
-.wptm-booking-form__summary .total { border-top: 2px solid var(--wptm-border); margin-top: 8px; padding-top: 8px; font-weight: 700; font-size: 18px; color: var(--wptm-primary); }
+.wptm-booking-form__summary .total { border-top: 1px solid var(--wptm-border); margin-top: 8px; padding-top: 8px; font-weight: 600; font-size: 18px; color: var(--wptm-primary); }
 
 /* Destinations Grid */
 .wptm-destinations-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 16px; }
@@ -230,7 +230,7 @@
     background: linear-gradient(transparent,rgba(0,0,0,.7));
     padding: 20px; color: #fff;
 }
-.wptm-destination-overlay h3 { margin: 0; font-family: var(--wptm-font-display); font-size: 18px; font-weight: 700; }
+.wptm-destination-overlay h3 { margin: 0; font-family: var(--wptm-font-display); font-size: 18px; font-weight: 600; }
 .wptm-destination-overlay span { font-size: 13px; opacity: .8; }
 
 /* Single Trip/Hotel */
@@ -244,7 +244,7 @@
 
 /* Section Blocks */
 .wptm-section { margin-bottom: 32px; }
-.wptm-section__title { font-family: var(--wptm-font-display); font-size: 22px; font-weight: 700; color: var(--wptm-dark); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--wptm-border); }
+.wptm-section__title { font-family: var(--wptm-font-display); font-size: 22px; font-weight: 600; color: var(--wptm-dark); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--wptm-border); }
 
 /* Related items ("You may also like") */
 .wptm-related { background: var(--wptm-bg, #faf7f5); border-top: 1px solid var(--wptm-border); }
@@ -263,14 +263,14 @@
 .wptm-map-embed iframe { display: block; width: 100%; height: 340px; border: 0; }
 .wptm-location__bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; }
 .wptm-location__addr { font-size: 14px; color: var(--wptm-text); }
-.wptm-location__directions { font-size: 14px; font-weight: 600; color: var(--wptm-primary); text-decoration: none; white-space: nowrap; }
+.wptm-location__directions { font-size: 14px; font-weight: 500; color: var(--wptm-primary); text-decoration: none; white-space: nowrap; }
 .wptm-location__directions:hover { text-decoration: underline; }
 
 /* Enquiry form (admin-configurable fields) */
 .wptm-enquiry { max-width: 640px; }
 .wptm-enquiry__intro { font-size: 14px; color: var(--wptm-muted); margin: 0 0 16px; }
 .wptm-enquiry-form .wptm-form-group { margin-bottom: 14px; }
-.wptm-enquiry-form label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--wptm-text); }
+.wptm-enquiry-form label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: var(--wptm-text); }
 .wptm-enquiry-form label .wptm-req { color: var(--wptm-primary); }
 .wptm-enquiry-form input,
 .wptm-enquiry-form select,
@@ -292,7 +292,7 @@
 .wptm-faq__q {
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
     padding: 14px 18px; cursor: pointer; list-style: none; user-select: none;
-    font-family: var(--wptm-font-display); font-size: 15px; font-weight: 700; color: var(--wptm-dark);
+    font-family: var(--wptm-font-display); font-size: 15px; font-weight: 600; color: var(--wptm-dark);
 }
 .wptm-faq__q::-webkit-details-marker { display: none; }
 .wptm-faq__chevron {
@@ -310,7 +310,7 @@
 .wptm-itinerary__bar .wptm-section__title { margin: 0; }
 .wptm-itinerary__toggle-all {
     display: inline-flex; align-items: center; gap: 7px; flex-shrink: 0;
-    padding: 8px 14px; font-size: 13px; font-weight: 600; font-family: var(--wptm-font);
+    padding: 8px 14px; font-size: 13px; font-weight: 500; font-family: var(--wptm-font);
     color: var(--wptm-primary); background: var(--wptm-white);
     border: 1px solid var(--wptm-primary); border-radius: 999px; cursor: pointer; transition: all .15s;
 }
@@ -345,10 +345,10 @@
 }
 .wptm-itinerary__head::-webkit-details-marker { display: none; }
 .wptm-itinerary__daynum {
-    flex-shrink: 0; font-size: 12px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase;
+    flex-shrink: 0; font-size: 12px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase;
     color: var(--wptm-primary); background: rgba(253,70,33,.1); padding: 4px 10px; border-radius: 999px;
 }
-.wptm-itinerary__title { flex: 1; font-family: var(--wptm-font-display); font-size: 16px; font-weight: 700; color: var(--wptm-dark); }
+.wptm-itinerary__title { flex: 1; font-family: var(--wptm-font-display); font-size: 16px; font-weight: 600; color: var(--wptm-dark); }
 .wptm-itinerary__chevron {
     flex-shrink: 0; width: 9px; height: 9px; margin-right: 4px;
     border-right: 2px solid var(--wptm-muted); border-bottom: 2px solid var(--wptm-muted);
@@ -376,14 +376,14 @@
     border: 1px solid var(--wptm-border); font-size: 16px; line-height: 1;
 }
 .wptm-itinerary__fact-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.wptm-itinerary__fact-label { font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--wptm-muted); }
-.wptm-itinerary__fact-value { font-size: 13.5px; font-weight: 600; color: var(--wptm-dark); line-height: 1.45; }
+.wptm-itinerary__fact-label { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--wptm-muted); }
+.wptm-itinerary__fact-value { font-size: 13.5px; font-weight: 500; color: var(--wptm-dark); line-height: 1.45; }
 
 /* Reviews */
 .wptm-reviews {}
 .wptm-review { padding: 20px 0; border-bottom: 1px solid var(--wptm-border); }
 .wptm-review__header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-.wptm-review__avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--wptm-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.wptm-review__avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--wptm-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 600; }
 .wptm-review__stars { color: var(--wptm-accent); font-size: 14px; }
 .wptm-review__content { font-size: 14px; line-height: 1.6; color: var(--wptm-text); }
 
@@ -396,7 +396,7 @@
     box-shadow: 0 -4px 20px rgba(0,0,0,.08);
 }
 .wptm-sticky-bar.visible { display: flex; }
-.wptm-sticky-bar__price .amount { font-size: 24px; font-weight: 800; color: var(--wptm-primary); }
+.wptm-sticky-bar__price .amount { font-size: 24px; font-weight: 700; color: var(--wptm-primary); }
 
 /* AI Chat Widget */
 .wptm-ai-chat {
@@ -413,10 +413,15 @@
 .wptm-ai-chat__toggle:hover { transform: scale(1.1); }
 .wptm-ai-chat__window {
     position: absolute; bottom: 72px; right: 0;
-    width: 380px; height: 500px;
+    width: min(380px, calc(100vw - 32px));
+    height: min(520px, calc(100vh - 120px));
     background: var(--wptm-white); border-radius: var(--wptm-radius);
     box-shadow: var(--wptm-shadow-lg); border: 1px solid var(--wptm-border);
     display: none; flex-direction: column; overflow: hidden;
+}
+@media(max-width:480px) {
+    .wptm-ai-chat { bottom: 16px; right: 16px; }
+    .wptm-ai-chat__window { width: calc(100vw - 32px); height: min(70vh, calc(100vh - 96px)); }
 }
 .wptm-ai-chat__window.open { display: flex; animation: wptmChatIn .3s ease; }
 @keyframes wptmChatIn { from { opacity: 0; transform: translateY(20px) scale(.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
@@ -424,35 +429,79 @@
     background: linear-gradient(135deg,var(--wptm-primary),var(--wptm-secondary));
     color: #fff; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;
 }
-.wptm-ai-chat__header h4 { margin: 0; font-size: 16px; font-weight: 600; }
+.wptm-ai-chat__header h4 { margin: 0; font-size: 16px; font-weight: 500; }
 .wptm-ai-chat__close { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; opacity: .8; }
 .wptm-ai-chat__close:hover { opacity: 1; }
-.wptm-ai-chat__messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
-.wptm-ai-chat__msg { max-width: 85%; padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 1.5; }
+.wptm-ai-chat__messages {
+    flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+    padding: 16px; display: flex; flex-direction: column; gap: 12px;
+    scrollbar-width: thin; scrollbar-color: var(--wptm-border) transparent;
+}
+.wptm-ai-chat__messages::-webkit-scrollbar { width: 8px; }
+.wptm-ai-chat__messages::-webkit-scrollbar-thumb { background: var(--wptm-border); border-radius: 999px; border: 2px solid var(--wptm-white); }
+.wptm-ai-chat__msg { max-width: 85%; padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
 .wptm-ai-chat__msg--user { align-self: flex-end; background: var(--wptm-primary); color: #fff; border-bottom-right-radius: 4px; }
 .wptm-ai-chat__msg--bot { align-self: flex-start; background: var(--wptm-bg); color: var(--wptm-text); border-bottom-left-radius: 4px; }
 .wptm-ai-chat__input {
-    display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--wptm-border);
+    display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--wptm-border); align-items: flex-end;
 }
-.wptm-ai-chat__input input { flex: 1; border: 1px solid var(--wptm-border); border-radius: var(--wptm-radius-sm); padding: 10px 14px; font-size: 14px; font-family: var(--wptm-font); }
-.wptm-ai-chat__input input:focus { outline: none; border-color: var(--wptm-primary); }
+.wptm-ai-chat__input textarea {
+    flex: 1; border: 1px solid var(--wptm-border); border-radius: var(--wptm-radius-sm);
+    padding: 10px 14px; font-size: 14px; font-family: var(--wptm-font);
+    resize: none; min-height: 42px; max-height: 120px; line-height: 1.4;
+    overflow-y: auto; overscroll-behavior: contain;
+}
+.wptm-ai-chat__input textarea:focus { outline: none; border-color: var(--wptm-primary); }
+.wptm-ai-chat__msg a { color: var(--wptm-primary); text-decoration: underline; }
+.wptm-ai-chat__msg--user a { color: #fff; }
+/* Trip/hotel cards the assistant suggests — compact 2-up grid under its reply. */
+.wptm-ai-chat__recs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.wptm-ai-chat__recs .wptm-ai-rec { padding: 0; background: transparent; border: none; }
+.wptm-ai-chat__recs .wptm-trip-card,
+.wptm-ai-chat__recs .wptm-hotel-card { border-radius: 12px; }
+.wptm-ai-chat__recs .wptm-trip-card:hover,
+.wptm-ai-chat__recs .wptm-hotel-card:hover { transform: none; box-shadow: 0 1px 2px rgba(16,24,40,.06); border-color: var(--wptm-border); }
+.wptm-ai-chat__recs .wptm-trip-card__image,
+.wptm-ai-chat__recs .wptm-hotel-card__image { height: 84px; }
+.wptm-ai-chat__recs .wptm-trip-card__body,
+.wptm-ai-chat__recs .wptm-hotel-card__body { padding: 9px 10px 10px; }
+.wptm-ai-chat__recs .wptm-trip-card__title,
+.wptm-ai-chat__recs .wptm-hotel-card__title {
+    font-size: 12.5px; margin: 0 0 6px; line-height: 1.3;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+/* Hide the busy bits that don't fit a thumbnail — the image/title still link through. */
+.wptm-ai-chat__recs .wptm-trip-card__meta,
+.wptm-ai-chat__recs .wptm-hotel-card__location,
+.wptm-ai-chat__recs .wptm-trip-card__wishlist,
+.wptm-ai-chat__recs .wptm-hotel-card__wishlist,
+.wptm-ai-chat__recs .wptm-card-ribbon--featured,
+.wptm-ai-chat__recs .wptm-trip-card__badge,
+.wptm-ai-chat__recs .wptm-trip-card__footer .wptm-btn,
+.wptm-ai-chat__recs .wptm-hotel-card__footer .wptm-btn { display: none; }
+.wptm-ai-chat__recs .wptm-trip-card__footer,
+.wptm-ai-chat__recs .wptm-hotel-card__footer { padding-top: 8px; border-top: none; }
+.wptm-ai-chat__recs .wptm-trip-card__price .amount,
+.wptm-ai-chat__recs .wptm-hotel-card__price .amount { font-size: 15px; }
+.wptm-ai-chat__recs .wptm-trip-card__price .per,
+.wptm-ai-chat__recs .wptm-hotel-card__price .per { font-size: 10px; }
 .wptm-ai-chat__input button {
     padding: 10px 16px; background: var(--wptm-primary); color: #fff;
-    border: none; border-radius: var(--wptm-radius-sm); cursor: pointer; font-weight: 600; transition: all .2s;
+    border: none; border-radius: var(--wptm-radius-sm); cursor: pointer; font-weight: 500; transition: all .2s;
 }
 .wptm-ai-chat__input button:hover { background: var(--wptm-primary-hover); }
 
 /* AI Trip Recommender ([wptm_ai_recommend]) */
 .wptm-ai-recommend {
     background: var(--wptm-white); border: 1px solid var(--wptm-border);
-    border-radius: var(--wptm-radius); padding: 24px; max-width: 640px;
+    border-radius: var(--wptm-radius); padding: 24px; max-width: 760px;
 }
 .wptm-ai-recommend__head { margin-bottom: 16px; }
 .wptm-ai-recommend__icon { font-size: 22px; }
-.wptm-ai-recommend__head h3 { margin: 6px 0 4px; font-family: var(--wptm-font-display); font-size: 20px; font-weight: 700; color: var(--wptm-dark); }
+.wptm-ai-recommend__head h3 { margin: 6px 0 4px; font-family: var(--wptm-font-display); font-size: 20px; font-weight: 600; color: var(--wptm-dark); }
 .wptm-ai-recommend__head p { margin: 0; font-size: 14px; color: var(--wptm-muted); }
 .wptm-ai-recommend .wptm-form-group { margin-bottom: 14px; }
-.wptm-ai-recommend label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--wptm-text); }
+.wptm-ai-recommend label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: var(--wptm-text); }
 .wptm-ai-recommend textarea,
 .wptm-ai-recommend input[type="text"] {
     width: 100%; padding: 12px 14px; border: 1px solid var(--wptm-border);
@@ -462,15 +511,19 @@
 .wptm-ai-recommend input[type="text"]:focus { outline: none; border-color: var(--wptm-primary); box-shadow: 0 0 0 3px rgba(253,70,33,.1); }
 .wptm-ai-recommend__status { margin: 14px 0 0; font-size: 13px; color: var(--wptm-muted); }
 .wptm-ai-recommend__status.is-error { color: #c0392b; }
-.wptm-ai-recommend__results { display: flex; flex-direction: column; gap: 12px; margin-top: 18px; }
-.wptm-ai-rec-card {
-    border: 1px solid var(--wptm-border); border-left: 3px solid var(--wptm-primary);
-    border-radius: var(--wptm-radius-sm); padding: 14px 16px; background: var(--wptm-bg);
+.wptm-ai-recommend__results { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; margin-top: 20px; }
+@media(max-width:560px) { .wptm-ai-recommend__results { grid-template-columns: 1fr; } }
+/* Each result = the AI's reason + match score on top of a real bookable card. */
+.wptm-ai-rec {
+    border: 1px solid var(--wptm-border); border-radius: var(--wptm-radius);
+    background: var(--wptm-primary-soft); padding: 12px 12px 14px;
 }
-.wptm-ai-rec-card__top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
-.wptm-ai-rec-card__top strong { font-size: 15px; color: var(--wptm-dark); }
-.wptm-ai-rec-card__score { flex-shrink: 0; font-size: 12px; font-weight: 700; color: var(--wptm-primary); background: rgba(253,70,33,.1); padding: 2px 8px; border-radius: 999px; }
-.wptm-ai-rec-card p { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--wptm-text); }
+.wptm-ai-rec__head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.wptm-ai-rec__why { font-size: 12px; font-weight: 600; letter-spacing: .01em; color: var(--wptm-primary-hover); }
+.wptm-ai-rec__score { flex-shrink: 0; font-size: 12px; font-weight: 600; color: var(--wptm-primary); background: rgba(253,70,33,.12); padding: 2px 9px; border-radius: 999px; }
+.wptm-ai-rec__reason { margin: 0 4px 12px; font-size: 13px; line-height: 1.5; color: var(--wptm-text); }
+.wptm-ai-rec .wptm-trip-card,
+.wptm-ai-rec .wptm-hotel-card { box-shadow: none; }
 
 /* ─── Date picker (booking form) ─── */
 .wptm-datepicker { margin-bottom: 16px; }
@@ -479,14 +532,14 @@
     border: 1px solid var(--wptm-border); border-radius: 12px; overflow: hidden; background: var(--wptm-white);
 }
 .wptm-dp-field { flex: 1; padding: 10px 14px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.wptm-dp-field__label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--wptm-muted); }
-.wptm-dp-field__value { font-size: 14px; font-weight: 700; color: var(--wptm-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wptm-dp-field__label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--wptm-muted); }
+.wptm-dp-field__value { font-size: 14px; font-weight: 600; color: var(--wptm-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .wptm-dp-arrow { display: flex; align-items: center; padding: 0 4px; color: var(--wptm-muted); background: var(--wptm-bg); }
 
 /* Premium calendar */
 .wptm-calendar { background: var(--wptm-white); border-radius: 16px; padding: 16px; border: 1px solid var(--wptm-border); box-shadow: var(--wptm-shadow); user-select: none; }
 .wptm-calendar__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.wptm-calendar__header h4 { margin: 0; font-family: var(--wptm-font-display); font-size: 15px; font-weight: 800; color: var(--wptm-dark); }
+.wptm-calendar__header h4 { margin: 0; font-family: var(--wptm-font-display); font-size: 15px; font-weight: 700; color: var(--wptm-dark); }
 .wptm-calendar__nav {
     background: var(--wptm-bg); border: 1px solid var(--wptm-border); border-radius: 9px;
     width: 32px; height: 32px; cursor: pointer; font-size: 18px; line-height: 1; color: var(--wptm-text);
@@ -495,18 +548,18 @@
 .wptm-calendar__nav:hover { background: var(--wptm-primary); color: #fff; border-color: var(--wptm-primary); }
 .wptm-calendar__nav[disabled] { opacity: .35; cursor: not-allowed; pointer-events: none; }
 .wptm-calendar__grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; text-align: center; }
-.wptm-calendar__day-name { font-size: 10.5px; font-weight: 700; color: var(--wptm-muted); text-transform: uppercase; padding: 6px 0; }
+.wptm-calendar__day-name { font-size: 10.5px; font-weight: 600; color: var(--wptm-muted); text-transform: uppercase; padding: 6px 0; }
 .wptm-calendar__pad { aspect-ratio: 1; }
 .wptm-calendar__day {
     aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; line-height: 1;
-    border: none; background: none; border-radius: 9px; font-size: 13.5px; font-weight: 600;
+    border: none; background: none; border-radius: 9px; font-size: 13.5px; font-weight: 500;
     color: var(--wptm-text); cursor: pointer; transition: background .12s ease, color .12s ease; font-family: var(--wptm-font);
 }
-.wptm-cal-price { font-size: 9px; font-weight: 700; color: var(--wptm-primary); }
+.wptm-cal-price { font-size: 9px; font-weight: 600; color: var(--wptm-primary); }
 .wptm-calendar__day:hover { background: var(--wptm-primary-soft); color: var(--wptm-primary); }
 .wptm-calendar__day.today { box-shadow: inset 0 0 0 1.5px var(--wptm-primary); color: var(--wptm-primary); }
 .wptm-calendar__day.is-start,
-.wptm-calendar__day.is-end { background: var(--wptm-primary); color: #fff; font-weight: 800; }
+.wptm-calendar__day.is-end { background: var(--wptm-primary); color: #fff; font-weight: 700; }
 .wptm-calendar__day.is-start .wptm-cal-price,
 .wptm-calendar__day.is-end .wptm-cal-price { color: rgba(255,255,255,.92); }
 .wptm-calendar__day.in-range { background: var(--wptm-primary-soft); color: var(--wptm-primary); border-radius: 0; }
@@ -683,7 +736,7 @@
 .wptm-lightbox__counter {
     position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%);
     background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.16);
-    color: #fff; font-size: 13px; font-weight: 600; letter-spacing: .03em;
+    color: #fff; font-size: 13px; font-weight: 500; letter-spacing: .03em;
     padding: 7px 16px; border-radius: 999px;
 }
 .wptm-lightbox.is-single .wptm-lightbox__nav,
@@ -723,7 +776,7 @@
 }
 .wptm-single-hero__title {
     font-family: var(--wptm-font-display);
-    font-size: clamp(30px, 5vw, 46px); font-weight: 800;
+    font-size: clamp(30px, 5vw, 46px); font-weight: 700;
     line-height: 1.1; letter-spacing: -.02em; margin: 14px 0 14px;
     color: #fff; text-shadow: 0 2px 20px rgba(0,0,0,.35);
 }
@@ -731,7 +784,7 @@
     display: inline-flex; align-items: center; gap: 6px;
     background: var(--wptm-gradient); color: #fff;
     padding: 7px 16px; border-radius: 999px;
-    font-size: 13px; font-weight: 700; letter-spacing: .01em;
+    font-size: 13px; font-weight: 600; letter-spacing: .01em;
     box-shadow: var(--wptm-shadow-brand);
 }
 .wptm-hero-badge--stars { background: rgba(255,255,255,.16); backdrop-filter: blur(8px); box-shadow: none; letter-spacing: 2px; }
@@ -770,7 +823,7 @@
     width: 46px; height: 46px; display: flex; align-items: center; justify-content: center;
     font-size: 22px; border-radius: 14px; background: var(--wptm-primary-soft); margin-bottom: 4px;
 }
-.wptm-fact__value { font-family: var(--wptm-font-display); font-size: 18px; font-weight: 700; color: var(--wptm-dark); }
+.wptm-fact__value { font-family: var(--wptm-font-display); font-size: 18px; font-weight: 600; color: var(--wptm-dark); }
 .wptm-fact__label { font-size: 12px; color: var(--wptm-muted); font-weight: 500; }
 
 /* Checklists */
@@ -797,7 +850,7 @@
     background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23ef4444' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='18' y1='6' x2='6' y2='18'/%3E%3Cline x1='6' y1='6' x2='18' y2='18'/%3E%3C/svg%3E");
 }
 .wptm-inc-exc { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
-.wptm-inc-exc__head { font-family: var(--wptm-font-display); font-size: 15px; font-weight: 700; margin: 0 0 14px; }
+.wptm-inc-exc__head { font-family: var(--wptm-font-display); font-size: 15px; font-weight: 600; margin: 0 0 14px; }
 .wptm-inc-exc__head--yes { color: var(--wptm-success); }
 .wptm-inc-exc__head--no { color: var(--wptm-danger); }
 @media(max-width:600px) { .wptm-inc-exc { grid-template-columns: 1fr; gap: 20px; } }
@@ -810,11 +863,11 @@
     box-shadow: var(--wptm-shadow); transition: transform .2s, box-shadow .2s, border-color .2s;
 }
 .wptm-room-card:hover { transform: translateY(-3px); box-shadow: var(--wptm-shadow-lg); border-color: rgba(253,70,33,.25); }
-.wptm-room-card__name { margin: 0 0 6px; font-family: var(--wptm-font-display); font-size: 18px; font-weight: 700; color: var(--wptm-dark); }
+.wptm-room-card__name { margin: 0 0 6px; font-family: var(--wptm-font-display); font-size: 18px; font-weight: 600; color: var(--wptm-dark); }
 .wptm-room-card__desc { margin: 0 0 10px; font-size: 13.5px; color: var(--wptm-muted); line-height: 1.5; }
 .wptm-room-card__meta { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--wptm-text); }
 .wptm-room-card__price { text-align: right; white-space: nowrap; }
-.wptm-room-card__price .amount { font-family: var(--wptm-font-display); font-size: 26px; font-weight: 800; color: var(--wptm-primary); }
+.wptm-room-card__price .amount { font-family: var(--wptm-font-display); font-size: 26px; font-weight: 700; color: var(--wptm-primary); }
 .wptm-room-card__price .per { display: block; font-size: 12px; color: var(--wptm-muted); }
 .wptm-room-card__old { display: block; font-size: 14px; color: var(--wptm-muted); text-decoration: line-through; }
 @media(max-width:560px) { .wptm-room-card { grid-template-columns: 1fr; } .wptm-room-card__price { text-align: left; } }
@@ -822,9 +875,9 @@
 /* Booking form — premium accents */
 .wptm-booking-form { border-top: 4px solid transparent; border-image: var(--wptm-gradient) 1; }
 .wptm-booking-form__header h3 { color: var(--wptm-dark); letter-spacing: -.01em; }
-.wptm-booking-form__header .wptm-trip-card__price .amount { font-family: var(--wptm-font-display); font-size: 30px; font-weight: 800; color: var(--wptm-primary); }
+.wptm-booking-form__header .wptm-trip-card__price .amount { font-family: var(--wptm-font-display); font-size: 30px; font-weight: 700; color: var(--wptm-primary); }
 .wptm-booking-form__summary { border: 1px solid var(--wptm-border); }
-.wptm-availability-status { font-size: 13px; font-weight: 600; margin-bottom: 12px; }
+.wptm-availability-status { font-size: 13px; font-weight: 500; margin-bottom: 12px; }
 .wptm-availability-status.available { color: var(--wptm-success); }
 .wptm-availability-status.unavailable { color: var(--wptm-danger); }
 .wptm-booking-confirmation {
@@ -845,7 +898,7 @@
 .wptm-prose { font-size: 15px; line-height: 1.8; color: #475569; }
 .wptm-prose p { margin: 0 0 1em; }
 .wptm-amenities { display: flex; flex-wrap: wrap; gap: 8px; }
-.wptm-sticky-bar__title { font-weight: 700; font-size: 16px; color: var(--wptm-dark); }
+.wptm-sticky-bar__title { font-weight: 600; font-size: 16px; color: var(--wptm-dark); }
 .wptm-sticky-bar__price .per { font-size: 13px; color: var(--wptm-muted); }
 .wptm-booking-form__header .wptm-from { font-size: 13px; font-weight: 500; color: var(--wptm-muted); }
 
@@ -853,14 +906,14 @@
 .wptm-static-field {
     display: flex; align-items: center; min-height: 46px;
     padding: 12px 14px; border: 1px solid var(--wptm-border); border-radius: var(--wptm-radius-sm);
-    background: var(--wptm-bg); color: var(--wptm-dark); font-size: 14px; font-weight: 600;
+    background: var(--wptm-bg); color: var(--wptm-dark); font-size: 14px; font-weight: 500;
 }
 .wptm-date-hint {
     display: flex; align-items: flex-start; gap: 6px; margin: -4px 0 16px;
     font-size: 12.5px; line-height: 1.5; color: var(--wptm-muted);
 }
 .wptm-date-hint .dashicons { font-size: 16px; width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; color: var(--wptm-primary); }
-.wptm-return-hint { color: var(--wptm-text); font-weight: 600; white-space: nowrap; }
+.wptm-return-hint { color: var(--wptm-text); font-weight: 500; white-space: nowrap; }
 
 /* Multi-tier ticket selector */
 .wptm-tiers { display: flex; flex-direction: column; gap: 10px; }
@@ -871,7 +924,7 @@
 }
 .wptm-tier-row:hover { border-color: var(--wptm-primary); }
 .wptm-tier-info { display: flex; flex-direction: column; gap: 2px; }
-.wptm-tier-label { font-weight: 600; font-size: 14px; color: var(--wptm-dark); }
+.wptm-tier-label { font-weight: 500; font-size: 14px; color: var(--wptm-dark); }
 .wptm-tier-price { font-size: 13px; color: var(--wptm-text); }
 .wptm-tier-price del { color: var(--wptm-muted); margin-right: 4px; }
 .wptm-tier-price small { color: var(--wptm-muted); }
@@ -977,7 +1030,7 @@
     position: absolute; inset: 0; z-index: 3;
     display: flex; align-items: center; justify-content: center;
     background: rgba(20,16,12,.28); border: none; cursor: pointer;
-    color: #fff; font-family: var(--wptm-font-display); font-size: clamp(22px, 4vw, 34px); font-weight: 800;
+    color: #fff; font-family: var(--wptm-font-display); font-size: clamp(22px, 4vw, 34px); font-weight: 700;
     letter-spacing: -.01em; transition: background .25s;
 }
 .wptm-hero-gallery__more:hover { background: rgba(20,16,12,.12); }
@@ -1014,7 +1067,7 @@
 .wptm-hero-gallery__count {
     position: absolute; top: 20px; right: 20px; z-index: 3;
     background: rgba(26,20,16,.55); backdrop-filter: blur(6px);
-    color: #fff; font-size: 13px; font-weight: 600;
+    color: #fff; font-size: 13px; font-weight: 500;
     padding: 6px 14px; border-radius: 999px;
 }
 
@@ -1034,7 +1087,7 @@
 .wptm-hero-media-btn {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 11px 18px; border: 1px solid rgba(255,255,255,.7); border-radius: 12px; cursor: pointer;
-    font-family: var(--wptm-font); font-size: 13.5px; font-weight: 700; color: var(--wptm-dark);
+    font-family: var(--wptm-font); font-size: 13.5px; font-weight: 600; color: var(--wptm-dark);
     background: rgba(255,255,255,.92); box-shadow: 0 8px 22px rgba(0,0,0,.22);
     transition: transform .2s, box-shadow .2s, background .2s;
 }
@@ -1077,7 +1130,7 @@
 .wptm-payment { margin-top: 8px; }
 .wptm-payment__label {
     display: block;
-    font-weight: 700;
+    font-weight: 600;
     margin-bottom: 10px;
     color: var(--wptm-text, #1a1a1a);
 }
@@ -1136,7 +1189,7 @@
     min-width: 0;
 }
 .wptm-payment-method__title {
-    font-weight: 700;
+    font-weight: 600;
     font-size: 15px;
     color: var(--wptm-text, #1a1a1a);
 }
@@ -1228,7 +1281,7 @@
     padding: 3px 10px;
     border-radius: 999px;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1.6;
     background: #eef2f7;
     color: #475569;
@@ -1243,21 +1296,21 @@
 
 /* ─── My Bookings ─── */
 .wptm-my-bookings { max-width: 960px; margin: 40px auto; padding: 0 20px; }
-.wptm-my-bookings__title { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 24px; }
+.wptm-my-bookings__title { font-family: var(--wptm-font-display); font-size: 28px; font-weight: 700; margin-bottom: 24px; }
 .wptm-my-bookings__empty { text-align: center; padding: 60px 0; color: var(--wptm-text-muted, #64748b); }
 .wptm-my-bookings__empty p { font-size: 18px; margin-bottom: 16px; }
 .wptm-my-bookings__table-wrap { overflow-x: auto; border: 1px solid var(--wptm-border); border-radius: var(--wptm-radius); }
 .wptm-my-bookings__table { width: 100%; border-collapse: collapse; background: var(--wptm-white, #fff); }
 .wptm-my-bookings__table th,
 .wptm-my-bookings__table td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--wptm-border); font-size: 14px; }
-.wptm-my-bookings__table th { background: #f8fafc; font-weight: 700; color: var(--wptm-text, #1a1a1a); white-space: nowrap; }
+.wptm-my-bookings__table th { background: #f8fafc; font-weight: 600; color: var(--wptm-text, #1a1a1a); white-space: nowrap; }
 .wptm-my-bookings__table tr:last-child td { border-bottom: none; }
 @media (max-width: 640px) {
     .wptm-my-bookings__table thead { display: none; }
     .wptm-my-bookings__table, .wptm-my-bookings__table tbody, .wptm-my-bookings__table tr, .wptm-my-bookings__table td { display: block; width: 100%; }
     .wptm-my-bookings__table tr { border-bottom: 2px solid var(--wptm-border); padding: 8px 0; }
     .wptm-my-bookings__table td { border: none; padding: 6px 16px; display: flex; justify-content: space-between; gap: 16px; }
-    .wptm-my-bookings__table td::before { content: attr(data-label); font-weight: 700; color: var(--wptm-text-muted, #64748b); }
+    .wptm-my-bookings__table td::before { content: attr(data-label); font-weight: 600; color: var(--wptm-text-muted, #64748b); }
 }
 
 /* ─── Block / Elementor wrappers — consume style-control variables ─── */
@@ -1351,7 +1404,7 @@
 /* ─── Hotel facilities (grouped, with icons) ─── */
 .wptm-facilities { display: grid; gap: 26px; }
 .wptm-facility-group__title {
-    font-family: var(--wptm-font-display); font-size: 13px; font-weight: 800;
+    font-family: var(--wptm-font-display); font-size: 13px; font-weight: 700;
     text-transform: uppercase; letter-spacing: .05em; color: var(--wptm-muted);
     margin: 0 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--wptm-border);
 }
@@ -1371,7 +1424,7 @@
 .wptm-archive-hero::before { content: ""; position: absolute; inset: 0; background: radial-gradient(760px 320px at 82% -25%, rgba(255,255,255,.16), transparent 60%); }
 .wptm-archive-hero--trip  { background: linear-gradient(135deg, #fd4621, #ff8a3d); }
 .wptm-archive-hero--hotel { background: linear-gradient(135deg, #e23410, #fd4621); }
-.wptm-archive-hero__title { font-family: var(--wptm-font-display); font-size: 42px; font-weight: 800; letter-spacing: -.02em; margin: 0 0 12px; position: relative; }
+.wptm-archive-hero__title { font-family: var(--wptm-font-display); font-size: 42px; font-weight: 700; letter-spacing: -.02em; margin: 0 0 12px; position: relative; }
 .wptm-archive-hero__sub { font-size: 18px; opacity: .92; max-width: 600px; margin: 0 auto; position: relative; }
 .wptm-archive-body { max-width: 1200px; margin: 0 auto; padding: 0 20px 60px; }
 .wptm-archive-pagination { margin-top: 40px; text-align: center; }
@@ -1387,13 +1440,13 @@
     position: relative; z-index: 3;
 }
 .wptm-filter-bar__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-.wptm-filter-bar__title { display: inline-flex; align-items: center; gap: 7px; font-family: var(--wptm-font-display); font-weight: 800; font-size: 15px; color: var(--wptm-dark); }
+.wptm-filter-bar__title { display: inline-flex; align-items: center; gap: 7px; font-family: var(--wptm-font-display); font-weight: 700; font-size: 15px; color: var(--wptm-dark); }
 .wptm-filter-bar__title .wptm-icon { color: var(--wptm-icon-color); }
-.wptm-filter-count { font-size: 13px; font-weight: 700; color: var(--wptm-muted); }
+.wptm-filter-count { font-size: 13px; font-weight: 600; color: var(--wptm-muted); }
 .wptm-filter-bar__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; }
 .wptm-filter-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .wptm-filter-field--search { grid-column: span 2; }
-.wptm-filter-field label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--wptm-muted); }
+.wptm-filter-field label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--wptm-muted); }
 .wptm-filter-field select,
 .wptm-filter-field input {
     width: 100%; padding: 10px 12px; border: 1px solid var(--wptm-border); border-radius: 10px;
@@ -1406,9 +1459,9 @@
 .wptm-filter-search .wptm-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--wptm-muted); }
 .wptm-filter-search input { padding-left: 34px; }
 .wptm-filter-price { display: flex; align-items: center; gap: 6px; }
-.wptm-filter-price span { color: var(--wptm-muted); font-weight: 600; }
+.wptm-filter-price span { color: var(--wptm-muted); font-weight: 500; }
 .wptm-filter-bar__actions { margin-top: 14px; display: flex; justify-content: flex-end; }
-.wptm-filter-reset { background: none; border: none; color: var(--wptm-primary); font-weight: 700; font-size: 13px; cursor: pointer; padding: 6px 10px; border-radius: 8px; transition: background .15s; }
+.wptm-filter-reset { background: none; border: none; color: var(--wptm-primary); font-weight: 600; font-size: 13px; cursor: pointer; padding: 6px 10px; border-radius: 8px; transition: background .15s; }
 .wptm-filter-reset:hover { background: var(--wptm-primary-soft); }
 
 .wptm-search-results.is-loading { opacity: .45; pointer-events: none; transition: opacity .2s ease; }
@@ -1421,7 +1474,7 @@
     min-width: 40px; height: 40px; padding: 0 12px;
     display: inline-flex; align-items: center; justify-content: center;
     border: 1px solid var(--wptm-border); background: var(--wptm-white);
-    border-radius: 10px; font-size: 14px; font-weight: 700; color: var(--wptm-text);
+    border-radius: 10px; font-size: 14px; font-weight: 600; color: var(--wptm-text);
     cursor: pointer; transition: border-color .15s, background .15s, color .15s;
 }
 .wptm-pager__btn:hover { border-color: var(--wptm-primary); color: var(--wptm-primary); }
@@ -1443,6 +1496,6 @@
 .wptm-pickup-num {
     flex: none; width: 24px; height: 24px; border-radius: 7px;
     display: inline-flex; align-items: center; justify-content: center;
-    background: var(--wptm-primary-soft); color: var(--wptm-primary); font-size: 12px; font-weight: 700;
+    background: var(--wptm-primary-soft); color: var(--wptm-primary); font-size: 12px; font-weight: 600;
 }
 .wptm-pickup-select { flex: 1 1 auto; width: 100%; }

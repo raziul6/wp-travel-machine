@@ -21,6 +21,7 @@ class Settings {
             'wptm_enquiry_enabled', 'wptm_enquiry_title', 'wptm_enquiry_email', 'wptm_enquiry_fields',
             'wptm_stripe_enabled', 'wptm_stripe_publishable_key', 'wptm_stripe_secret_key', 'wptm_stripe_webhook_secret',
             'wptm_paypal_enabled', 'wptm_paypal_client_id', 'wptm_paypal_secret', 'wptm_paypal_mode',
+            'wptm_razorpay_enabled', 'wptm_razorpay_key_id', 'wptm_razorpay_key_secret', 'wptm_razorpay_webhook_secret',
             'wptm_manual_payment', 'wptm_bank_instructions', 'wptm_booking_email', 'wptm_terms_page',
             // Email notifications.
             'wptm_email_from_name', 'wptm_email_from_address', 'wptm_email_customer_enabled',
@@ -71,7 +72,7 @@ class Settings {
             'wptm_enable_wishlist', 'wptm_enable_compare', 'wptm_enable_reviews',
             'wptm_enable_related',
             'wptm_enable_ai', 'wptm_tax_enabled', 'wptm_enquiry_enabled',
-            'wptm_stripe_enabled', 'wptm_paypal_enabled', 'wptm_manual_payment',
+            'wptm_stripe_enabled', 'wptm_paypal_enabled', 'wptm_razorpay_enabled', 'wptm_manual_payment',
             'wptm_email_customer_enabled', 'wptm_email_admin_enabled',
         );
 

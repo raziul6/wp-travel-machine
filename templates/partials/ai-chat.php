@@ -13,9 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             <h4>🤖 <?php esc_html_e( 'Travel Assistant', 'wp-travel-machine' ); ?></h4>
             <button class="wptm-ai-chat__close" aria-label="<?php esc_attr_e( 'Close', 'wp-travel-machine' ); ?>">&times;</button>
         </div>
-        <div class="wptm-ai-chat__messages"></div>
+        <div class="wptm-ai-chat__messages" role="log" aria-live="polite" aria-atomic="false"></div>
         <div class="wptm-ai-chat__input">
-            <input type="text" placeholder="<?php esc_attr_e( 'Ask me about trips, destinations...', 'wp-travel-machine' ); ?>">
+            <textarea rows="1" placeholder="<?php esc_attr_e( 'Ask me about trips, destinations...', 'wp-travel-machine' ); ?>"></textarea>
             <button type="button"><?php esc_html_e( 'Send', 'wp-travel-machine' ); ?></button>
         </div>
     </div>

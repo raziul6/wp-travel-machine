@@ -23,6 +23,12 @@ class PaymentGateway {
         add_action( 'wp_ajax_wptm_paypal_capture_order', array( $this, 'paypal_capture_order' ) );
         add_action( 'wp_ajax_nopriv_wptm_paypal_capture_order', array( $this, 'paypal_capture_order' ) );
 
+        // Razorpay — create order (server) → checkout modal → verify signature.
+        add_action( 'wp_ajax_wptm_razorpay_create_order', array( $this, 'razorpay_create_order' ) );
+        add_action( 'wp_ajax_nopriv_wptm_razorpay_create_order', array( $this, 'razorpay_create_order' ) );
+        add_action( 'wp_ajax_wptm_razorpay_verify', array( $this, 'razorpay_verify' ) );
+        add_action( 'wp_ajax_nopriv_wptm_razorpay_verify', array( $this, 'razorpay_verify' ) );
+
         // Stripe webhook — the authoritative payment-confirmation channel.
         add_action( 'rest_api_init', array( $this, 'register_webhook_route' ) );
     }
@@ -38,6 +44,25 @@ class PaymentGateway {
             'callback'            => array( $this, 'handle_stripe_webhook' ),
             'permission_callback' => '__return_true',
         ) );
+        register_rest_route( 'wptm/v1', '/razorpay-webhook', array(
+            'methods'             => 'POST',
+            'callback'            => array( $this, 'handle_razorpay_webhook' ),
+            'permission_callback' => '__return_true',
+        ) );
+    }
+
+    /**
+     * Delegate an incoming Razorpay webhook to the Razorpay gateway.
+     *
+     * @param \WP_REST_Request $request The webhook request.
+     * @return \WP_REST_Response
+     */
+    public function handle_razorpay_webhook( $request ) {
+        $gw = $this->get_gateway( 'razorpay' );
+        if ( ! $gw ) {
+            return new \WP_REST_Response( array( 'error' => 'Razorpay gateway unavailable.' ), 503 );
+        }
+        return $gw->handle_webhook( $request );
     }
 
     /**
@@ -56,9 +81,10 @@ class PaymentGateway {
 
     public function register_gateways() {
         $this->gateways = apply_filters( 'wptm_payment_gateways', array(
-            'manual'  => new ManualGateway(),
-            'stripe'  => new StripeGateway(),
-            'paypal'  => new PaypalGateway(),
+            'manual'   => new ManualGateway(),
+            'stripe'   => new StripeGateway(),
+            'paypal'   => new PaypalGateway(),
+            'razorpay' => new RazorpayGateway(),
         ) );
     }
 
@@ -180,6 +206,56 @@ class PaymentGateway {
         }
 
         $result = $gw->capture_order( $order_id, $booking_id );
+        if ( ! empty( $result['success'] ) ) {
+            wp_send_json_success( $result );
+        }
+        wp_send_json_error( $result );
+    }
+
+    /**
+     * Return the active Razorpay gateway, or send a JSON error and stop.
+     */
+    private function require_razorpay() {
+        $gw = $this->gateways['razorpay'] ?? null;
+        if ( ! $gw || ! $gw->is_enabled() ) {
+            wp_send_json_error( array( 'message' => __( 'Razorpay is not available.', 'wp-travel-machine' ) ) );
+        }
+        return $gw;
+    }
+
+    /**
+     * AJAX: create a Razorpay order for a booking (called before opening the
+     * Razorpay checkout modal). Returns the order id + checkout options.
+     */
+    public function razorpay_create_order() {
+        check_ajax_referer( 'wptm_booking_nonce', 'nonce' );
+        $gw         = $this->require_razorpay();
+        $booking_id = absint( $_POST['booking_id'] ?? 0 );
+
+        $result = $gw->create_order( $booking_id );
+        if ( ! empty( $result['success'] ) ) {
+            wp_send_json_success( $result );
+        }
+        wp_send_json_error( $result );
+    }
+
+    /**
+     * AJAX: verify a completed Razorpay payment (signature + server-side fetch)
+     * and mark the booking paid. Returns the confirmation redirect.
+     */
+    public function razorpay_verify() {
+        check_ajax_referer( 'wptm_booking_nonce', 'nonce' );
+        $gw         = $this->require_razorpay();
+        $booking_id = absint( $_POST['booking_id'] ?? 0 );
+        $payment_id = sanitize_text_field( wp_unslash( $_POST['razorpay_payment_id'] ?? '' ) );
+        $order_id   = sanitize_text_field( wp_unslash( $_POST['razorpay_order_id'] ?? '' ) );
+        $signature  = sanitize_text_field( wp_unslash( $_POST['razorpay_signature'] ?? '' ) );
+
+        if ( ! $payment_id || ! $order_id || ! $signature ) {
+            wp_send_json_error( array( 'message' => __( 'Missing payment reference.', 'wp-travel-machine' ) ) );
+        }
+
+        $result = $gw->verify_payment( $payment_id, $order_id, $signature, $booking_id );
         if ( ! empty( $result['success'] ) ) {
             wp_send_json_success( $result );
         }

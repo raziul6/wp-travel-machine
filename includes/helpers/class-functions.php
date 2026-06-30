@@ -468,6 +468,7 @@ function wptm_payment_methods() {
         'manual' => array( 'icon' => 'bank', 'desc' => __( 'Pay via bank transfer. Your booking is confirmed once we verify the payment.', 'wp-travel-machine' ) ),
         'stripe' => array( 'icon' => 'card', 'desc' => __( 'Pay securely with your credit or debit card.', 'wp-travel-machine' ) ),
         'paypal' => array( 'icon' => 'paypal', 'desc' => __( 'Pay with your PayPal balance or linked card.', 'wp-travel-machine' ) ),
+        'razorpay' => array( 'icon' => 'razorpay', 'desc' => __( 'Pay with cards, UPI, netbanking or wallets via Razorpay.', 'wp-travel-machine' ) ),
     );
 
     $methods = array();
@@ -513,6 +514,7 @@ function wptm_payment_icon( $key ) {
         'bank'   => '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-6 9 6"></path><path d="M4 10v9"></path><path d="M20 10v9"></path><path d="M8 10v9"></path><path d="M16 10v9"></path><line x1="2" y1="21" x2="22" y2="21"></line></svg>',
         'paypal' => '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 21l1.5-9h4.2c2.4 0 4.1 1.2 3.6 3.8C15.8 18.4 13.8 19 11.7 19H9.5"></path><path d="M9.5 16l1.4-9h4.2c2.4 0 4.1 1.2 3.6 3.8"></path></svg>',
         'wallet' => '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h15a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"></path><path d="M3 7l2-3h11l1 3"></path><circle cx="16" cy="13" r="1.4"></circle></svg>',
+        'razorpay' => '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3 6 14h4l-2 7 8-12h-4l2-6Z"></path></svg>',
     );
     return isset( $icons[ $key ] ) ? $icons[ $key ] : $icons['wallet'];
 }

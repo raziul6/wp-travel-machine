@@ -21,7 +21,7 @@ $wptm_hero  = $wptm_image
 ?>
 <div class="wptm-archive-wrap">
     <div class="wptm-archive-hero" style="<?php echo esc_attr( $wptm_hero ); ?>padding:64px 20px;text-align:center;color:#fff;">
-        <h1 style="font-family:'Sora',sans-serif;font-size:42px;font-weight:800;margin:0 0 12px;"><?php single_term_title(); ?></h1>
+        <h1 style="font-family:var(--wptm-font-display);font-size:42px;font-weight:700;margin:0 0 12px;"><?php single_term_title(); ?></h1>
         <?php if ( $wptm_term && ! empty( $wptm_term->description ) ) : ?>
             <p style="font-size:18px;opacity:.85;max-width:680px;margin:0 auto;"><?php echo esc_html( wp_strip_all_tags( $wptm_term->description ) ); ?></p>
         <?php endif; ?>

@@ -52,9 +52,8 @@ class PublicHandler {
             wp_add_inline_style( 'wptm-public', $custom_colors );
         }
 
-        // Fonts — Sora (display) + Plus Jakarta Sans (body), self-hosted inside
-        // the plugin (no external/CDN request). Filter to disable, or pass your
-        // own stylesheet URL via 'wptm_fonts_url'.
+        // Font — Inter (self-hosted inside the plugin, no external/CDN request).
+        // Filter to disable, or pass your own stylesheet URL via 'wptm_fonts_url'.
         if ( apply_filters( 'wptm_enqueue_fonts', true ) ) {
             $fonts_path = WPTM_PLUGIN_DIR . 'assets/vendor/fonts/fonts.css';
             $fonts_url  = apply_filters( 'wptm_fonts_url', WPTM_PLUGIN_URL . 'assets/vendor/fonts/fonts.css' );
@@ -116,11 +115,15 @@ class PublicHandler {
             // Online gateway client SDKs — loaded only when the gateway is fully
             // configured, and made dependencies of the booking script so their
             // globals (Stripe / paypal) exist before it runs.
+            // Online gateways are a Pro feature, so their SDKs load only with Pro.
+            $is_pro        = wptm_is_pro();
             $currency      = get_option( 'wptm_currency', 'USD' );
             $stripe_pk     = (string) get_option( 'wptm_stripe_publishable_key', '' );
-            $stripe_on     = get_option( 'wptm_stripe_enabled', false ) && '' !== trim( $stripe_pk ) && '' !== trim( (string) get_option( 'wptm_stripe_secret_key', '' ) );
+            $stripe_on     = $is_pro && get_option( 'wptm_stripe_enabled', false ) && '' !== trim( $stripe_pk ) && '' !== trim( (string) get_option( 'wptm_stripe_secret_key', '' ) );
             $paypal_cid    = (string) get_option( 'wptm_paypal_client_id', '' );
-            $paypal_on     = get_option( 'wptm_paypal_enabled', false ) && '' !== trim( $paypal_cid ) && '' !== trim( (string) get_option( 'wptm_paypal_secret', '' ) );
+            $paypal_on     = $is_pro && get_option( 'wptm_paypal_enabled', false ) && '' !== trim( $paypal_cid ) && '' !== trim( (string) get_option( 'wptm_paypal_secret', '' ) );
+            $razorpay_kid  = (string) get_option( 'wptm_razorpay_key_id', '' );
+            $razorpay_on   = $is_pro && get_option( 'wptm_razorpay_enabled', false ) && '' !== trim( $razorpay_kid ) && '' !== trim( (string) get_option( 'wptm_razorpay_key_secret', '' ) );
 
             $booking_deps = array( 'wptm-public' );
             if ( $stripe_on ) {
@@ -139,6 +142,10 @@ class PublicHandler {
                 wp_enqueue_script( 'wptm-paypal-sdk', $paypal_sdk, array(), null, true );
                 $booking_deps[] = 'wptm-paypal-sdk';
             }
+            if ( $razorpay_on ) {
+                wp_enqueue_script( 'wptm-razorpay-js', 'https://checkout.razorpay.com/v1/checkout.js', array(), null, true );
+                $booking_deps[] = 'wptm-razorpay-js';
+            }
 
             wp_enqueue_script( 'wptm-booking', WPTM_PLUGIN_URL . 'assets/js/public/booking-engine.js', $booking_deps, $booking_ver, true );
             wp_localize_script( 'wptm-booking', 'wptmPay', array(
@@ -150,6 +157,10 @@ class PublicHandler {
                     'enabled'  => (bool) $paypal_on,
                     'clientId' => $paypal_cid,
                     'currency' => strtoupper( $currency ),
+                ),
+                'razorpay' => array(
+                    'enabled' => (bool) $razorpay_on,
+                    'keyId'   => $razorpay_kid,
                 ),
                 'i18n' => array(
                     'cardError'    => __( 'Please enter your card details.', 'wp-travel-machine' ),

@@ -13,7 +13,7 @@ $items       = $summary['items'];
 $sym         = get_option( 'wptm_currency_symbol', '$' );
 ?>
 <div class="wptm-checkout">
-    <h1 style="font-family:'Sora',sans-serif;font-size:32px;font-weight:800;margin-bottom:32px;"><?php esc_html_e( 'Checkout', 'wp-travel-machine' ); ?></h1>
+    <h1 style="font-family:var(--wptm-font-display);font-size:32px;font-weight:700;margin-bottom:32px;"><?php esc_html_e( 'Checkout', 'wp-travel-machine' ); ?></h1>
     <?php if ( empty( $items ) ) : ?>
         <div style="text-align:center;padding:60px 0;">
             <p style="font-size:48px;">🛒</p>
@@ -51,7 +51,7 @@ $sym         = get_option( 'wptm_currency_symbol', '$' );
                             <strong>-<?php echo esc_html( $sym . number_format( $summary['coupon']['discount'], 2 ) ); ?></strong>
                         </div>
                     <?php endif; ?>
-                    <div style="display:flex;justify-content:space-between;padding:12px 0;font-size:20px;font-weight:800;color:#fd4621;">
+                    <div style="display:flex;justify-content:space-between;padding:12px 0;font-size:20px;font-weight:700;color:#fd4621;">
                         <span><?php esc_html_e( 'Total', 'wp-travel-machine' ); ?></span>
                         <span><?php echo esc_html( $sym . number_format( max( 0, $summary['final_total'] ), 2 ) ); ?></span>
                     </div>

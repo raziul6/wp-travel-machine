@@ -144,22 +144,199 @@ class AIEngine {
         $prefs = sanitize_text_field( wp_unslash( $_POST['preferences'] ?? '' ) );
         $budget = sanitize_text_field( wp_unslash( $_POST['budget'] ?? '' ) );
 
-        // Get available trips for context.
-        $trips = get_posts( array( 'post_type' => 'wptm_trip', 'posts_per_page' => 20, 'post_status' => 'publish' ) );
-        $trip_list = '';
-        foreach ( $trips as $t ) {
-            $p = get_post_meta( $t->ID, '_wptm_pricing', true );
-            $price = is_array( $p ) && ! empty( $p ) ? $p[0]['price'] : 0;
-            $trip_list .= "- {$t->post_title} (\${$price}, " . get_post_meta( $t->ID, '_wptm_duration', true ) . " days)\n";
+        // Build a candidate pool of real trips AND hotels, each tagged with a
+        // stable code (T<id> / H<id>) so the model returns IDs we can resolve to
+        // actual bookable posts — not free-text titles that may not exist.
+        $candidates = $this->recommend_candidates();
+        if ( empty( $candidates['list'] ) ) {
+            wp_send_json_error( array( 'message' => __( 'No trips or hotels are available to recommend yet.', 'wp-travel-machine' ) ) );
         }
 
-        $prompt = "You are a travel advisor. Based on these preferences: '{$prefs}', budget: '{$budget}', recommend trips from this list:\n{$trip_list}\nProvide top 3 recommendations with reasons. Format as JSON array with keys: title, reason, match_score (1-100).";
+        $prompt = "You are a travel advisor. A visitor describes what they want and an optional budget. "
+            . "Pick the best matches ONLY from the catalog below and explain why each fits.\n\n"
+            . "Preferences: '{$prefs}'\nBudget: '{$budget}'\n\n"
+            . "Catalog (format: [CODE] Title — type, price, details):\n{$candidates['list']}\n\n"
+            . "Return STRICT JSON: an array of up to 4 objects, each with keys: "
+            . "\"id\" (the exact CODE, e.g. T12 or H34), "
+            . "\"reason\" (one short sentence, max 18 words, addressed to the visitor), "
+            . "\"match_score\" (integer 1-100). "
+            . "Order best match first. Output JSON only, no prose.";
 
         $result = $this->call_api( $prompt );
         if ( is_wp_error( $result ) ) {
             wp_send_json_error( array( 'message' => $result->get_error_message() ) );
         }
-        wp_send_json_success( array( 'recommendations' => $result ) );
+
+        $recs = $this->parse_recommendations( $result, $candidates['valid'] );
+        if ( empty( $recs ) ) {
+            wp_send_json_error( array( 'message' => __( 'No matching trips or hotels found. Try describing your trip differently.', 'wp-travel-machine' ) ) );
+        }
+
+        wp_send_json_success( array(
+            'html'  => $this->render_recommendation_cards( $recs ),
+            'count' => count( $recs ),
+        ) );
+    }
+
+    /**
+     * Build the trip + hotel candidate pool fed to the recommender.
+     *
+     * @return array{list:string,valid:array<string,array{id:int,type:string}>}
+     *               'list' is the prompt text; 'valid' maps each [CODE] to a real post.
+     */
+    private function recommend_candidates() {
+        $sym   = get_option( 'wptm_currency_symbol', '$' );
+        $lines = array();
+        $valid = array();
+
+        // Trips.
+        $trips = get_posts( array(
+            'post_type'      => 'wptm_trip',
+            'posts_per_page' => 20,
+            'post_status'    => 'publish',
+            'no_found_rows'  => true,
+        ) );
+        foreach ( $trips as $t ) {
+            $p        = get_post_meta( $t->ID, '_wptm_pricing', true );
+            $price    = is_array( $p ) && ! empty( $p ) ? (float) $p[0]['price'] : 0;
+            $duration = get_post_meta( $t->ID, '_wptm_duration', true );
+            $unit     = get_post_meta( $t->ID, '_wptm_duration_unit', true ) ?: 'days';
+            $dests    = get_the_terms( $t->ID, 'wptm_destination' );
+            $dest     = ! is_wp_error( $dests ) && ! empty( $dests ) ? $dests[0]->name : '';
+            $code     = 'T' . $t->ID;
+            $lines[]  = "[{$code}] {$t->post_title} — trip, {$sym}{$price}, {$duration} {$unit}" . ( $dest ? ", {$dest}" : '' );
+            $valid[ $code ] = array( 'id' => (int) $t->ID, 'type' => 'trip' );
+        }
+
+        // Hotels (with cheapest available room price, in one grouped query).
+        $hotels = get_posts( array(
+            'post_type'      => 'wptm_hotel',
+            'posts_per_page' => 15,
+            'post_status'    => 'publish',
+            'no_found_rows'  => true,
+        ) );
+        if ( $hotels ) {
+            global $wpdb;
+            $ids    = array_map( 'absint', wp_list_pluck( $hotels, 'ID' ) );
+            $in     = implode( ',', $ids );
+            $prices = array();
+            if ( '' !== $in ) {
+                // $in is composed solely of absint()'d IDs, so it is safe to inline.
+                $rows = $wpdb->get_results( "SELECT hotel_id, MIN(price_per_night) AS p FROM {$wpdb->prefix}wptm_rooms WHERE status = 'available' AND hotel_id IN ({$in}) GROUP BY hotel_id", ARRAY_A );
+                foreach ( (array) $rows as $row ) {
+                    $prices[ (int) $row['hotel_id'] ] = (float) $row['p'];
+                }
+            }
+            foreach ( $hotels as $h ) {
+                $city    = get_post_meta( $h->ID, '_wptm_hotel_city', true );
+                $country = get_post_meta( $h->ID, '_wptm_hotel_country', true );
+                $loc     = trim( $city . ', ' . $country, ', ' );
+                $stars   = (int) get_post_meta( $h->ID, '_wptm_star_rating', true );
+                $price   = $prices[ $h->ID ] ?? 0;
+                $code    = 'H' . $h->ID;
+                $lines[] = "[{$code}] {$h->post_title} — hotel, {$sym}{$price}/night" . ( $stars ? ", {$stars}-star" : '' ) . ( $loc ? ", {$loc}" : '' );
+                $valid[ $code ] = array( 'id' => (int) $h->ID, 'type' => 'hotel' );
+            }
+        }
+
+        return array( 'list' => implode( "\n", $lines ), 'valid' => $valid );
+    }
+
+    /**
+     * Parse the model's JSON reply into validated recommendations.
+     *
+     * Only codes present in $valid survive, so the model can never point a
+     * visitor at a post that does not exist or is the wrong type.
+     *
+     * @param string $text  Raw model reply.
+     * @param array  $valid Map of [CODE] => array{id,type} from the candidate pool.
+     * @return array<int,array{id:int,type:string,reason:string,score:int}>
+     */
+    private function parse_recommendations( $text, $valid ) {
+        $start = strpos( $text, '[' );
+        $end   = strrpos( $text, ']' );
+        if ( false === $start || false === $end || $end <= $start ) {
+            return array();
+        }
+        $arr = json_decode( substr( $text, $start, $end - $start + 1 ), true );
+        if ( ! is_array( $arr ) ) {
+            return array();
+        }
+
+        $out  = array();
+        $seen = array();
+        foreach ( $arr as $row ) {
+            if ( ! is_array( $row ) ) {
+                continue;
+            }
+            // Tolerate "T12", "[T12]", "t12" etc.
+            $code = preg_replace( '/[^A-Z0-9]/', '', strtoupper( (string) ( $row['id'] ?? '' ) ) );
+            if ( ! isset( $valid[ $code ] ) || isset( $seen[ $code ] ) ) {
+                continue;
+            }
+            $seen[ $code ] = true;
+            $out[] = array(
+                'id'     => $valid[ $code ]['id'],
+                'type'   => $valid[ $code ]['type'],
+                'reason' => sanitize_text_field( (string) ( $row['reason'] ?? '' ) ),
+                'score'  => isset( $row['match_score'] ) ? max( 1, min( 100, (int) $row['match_score'] ) ) : 0,
+            );
+            if ( count( $out ) >= 4 ) {
+                break;
+            }
+        }
+        return $out;
+    }
+
+    /**
+     * Render validated recommendations as real trip/hotel cards, each wrapped
+     * with the AI's "why this fits" reason and match score.
+     *
+     * @param array $recs Output of parse_recommendations().
+     * @return string Card HTML (safe to inject; the AI-controlled text is escaped).
+     */
+    private function render_recommendation_cards( $recs ) {
+        global $post;
+        $original = $post;
+        $html     = '';
+
+        foreach ( $recs as $rec ) {
+            $p = get_post( $rec['id'] );
+            if ( ! $p || 'publish' !== $p->post_status ) {
+                continue;
+            }
+            $partial = ( 'hotel' === $rec['type'] )
+                ? WPTM_PLUGIN_DIR . 'templates/partials/hotel-card.php'
+                : WPTM_PLUGIN_DIR . 'templates/partials/trip-card.php';
+            if ( ! file_exists( $partial ) ) {
+                continue;
+            }
+
+            $post = $p;
+            setup_postdata( $post );
+            ob_start();
+            include $partial;
+            $card = ob_get_clean();
+
+            $badge  = $rec['score']
+                ? '<span class="wptm-ai-rec__score">' . esc_html( $rec['score'] . '% ' . __( 'match', 'wp-travel-machine' ) ) . '</span>'
+                : '';
+            $reason = $rec['reason']
+                ? '<p class="wptm-ai-rec__reason">' . esc_html( $rec['reason'] ) . '</p>'
+                : '';
+
+            // The "why this fits" header only appears when the model gave a
+            // reason/score (the recommender form). In chat the card stands alone.
+            $head = ( $rec['reason'] || $rec['score'] )
+                ? '<div class="wptm-ai-rec__head"><span class="wptm-ai-rec__why">' . ( $rec['reason'] ? '✨ ' . esc_html__( 'Why this fits', 'wp-travel-machine' ) : '' ) . '</span>' . $badge . '</div>'
+                : '';
+
+            $html .= '<div class="wptm-ai-rec">' . $head . $reason . $card . '</div>';
+        }
+
+        $post = $original;
+        wp_reset_postdata();
+        return $html;
     }
 
     public function smart_search() {
@@ -448,16 +625,80 @@ class AIEngine {
         if ( ! $this->rate_limit_ok() ) wp_send_json_error( array( 'message' => __( 'Too many requests. Please slow down.', 'wp-travel-machine' ) ), 429 );
 
         $message = sanitize_text_field( wp_unslash( $_POST['message'] ?? '' ) );
-        $trips = get_posts( array( 'post_type' => 'wptm_trip', 'posts_per_page' => 10, 'post_status' => 'publish' ) );
-        $context = '';
-        foreach ( $trips as $t ) $context .= "- {$t->post_title}: " . wp_trim_words( $t->post_content, 15 ) . "\n";
-
-        $prompt = "You are a friendly travel assistant for a booking website. Available trips:\n{$context}\nUser asks: {$message}\nProvide helpful, concise travel advice.";
-        $reply = $this->call_api( $prompt, 500 );
-        if ( is_wp_error( $reply ) ) {
-            wp_send_json_error( array( 'message' => $reply->get_error_message() ) );
+        if ( '' === $message ) {
+            wp_send_json_error( array( 'message' => __( 'Please type a message.', 'wp-travel-machine' ) ) );
         }
 
-        wp_send_json_success( array( 'reply' => $reply ) );
+        // Same trip + hotel pool the recommender uses, so the assistant can
+        // suggest real, bookable items by their stable code.
+        $candidates = $this->recommend_candidates();
+
+        $prompt = "You are a friendly, concise travel assistant for a booking website. "
+            . "Reply to the visitor in 1-3 short sentences. "
+            . "ONLY if the visitor is browsing for or interested in booking a trip or hotel, also suggest "
+            . "up to 3 matching items from the catalog below by their CODE. "
+            . "For pure questions (visa, weather, general advice), recommend nothing.\n\n"
+            . "Catalog (format: [CODE] Title — type, price, details):\n{$candidates['list']}\n\n"
+            . "Visitor: {$message}\n\n"
+            . "Respond with STRICT JSON only: {\"reply\": \"your message\", \"recommend\": [\"CODE\", ...]}. "
+            . "Use an empty array when nothing relevant fits.";
+
+        $result = $this->call_api( $prompt, 500 );
+        if ( is_wp_error( $result ) ) {
+            wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+        }
+
+        $data = $this->extract_json( $result );
+        if ( is_array( $data ) ) {
+            $reply = trim( (string) ( $data['reply'] ?? '' ) );
+            $recs  = $this->codes_to_recs( $data['recommend'] ?? array(), $candidates['valid'] );
+            $cards = $recs ? $this->render_recommendation_cards( $recs ) : '';
+        } else {
+            // Model ignored the JSON contract — fall back to its raw text reply.
+            $reply = trim( wp_strip_all_tags( (string) $result ) );
+            $cards = '';
+        }
+
+        if ( '' === $reply && '' === $cards ) {
+            wp_send_json_error( array( 'message' => __( 'Sorry, I couldn\'t process that. Please try again.', 'wp-travel-machine' ) ) );
+        }
+
+        wp_send_json_success( array( 'reply' => $reply, 'cards' => $cards ) );
+    }
+
+    /**
+     * Map catalog codes (from the chat assistant) to renderable recommendations.
+     *
+     * Unlike parse_recommendations(), these carry no reason/score — the chat
+     * reply already provides the conversational context — so the cards render
+     * on their own. Codes are validated against the real pool.
+     *
+     * @param mixed $codes Array of code strings (or {id}/{code} objects).
+     * @param array $valid Map of [CODE] => array{id,type}.
+     * @return array<int,array{id:int,type:string,reason:string,score:int}>
+     */
+    private function codes_to_recs( $codes, $valid ) {
+        $out  = array();
+        $seen = array();
+        foreach ( (array) $codes as $raw ) {
+            if ( is_array( $raw ) ) {
+                $raw = $raw['id'] ?? $raw['code'] ?? reset( $raw );
+            }
+            $code = preg_replace( '/[^A-Z0-9]/', '', strtoupper( (string) $raw ) );
+            if ( ! isset( $valid[ $code ] ) || isset( $seen[ $code ] ) ) {
+                continue;
+            }
+            $seen[ $code ] = true;
+            $out[] = array(
+                'id'     => $valid[ $code ]['id'],
+                'type'   => $valid[ $code ]['type'],
+                'reason' => '',
+                'score'  => 0,
+            );
+            if ( count( $out ) >= 3 ) {
+                break;
+            }
+        }
+        return $out;
     }
 }

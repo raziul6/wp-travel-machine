@@ -476,6 +476,60 @@
             }).render(mount);
         }
 
+        // --- Razorpay (server order → checkout modal → verify signature) ----
+        function razorpayFail(msg) {
+            setLoading(false);
+            currentBookingId = 0; // let the customer retry on a clean row
+            wptmToast(msg || (PAYI18N.payFailed || 'Payment failed.'), 'error');
+        }
+
+        function payWithRazorpay() {
+            if (typeof Razorpay === 'undefined' || !PAY.razorpay || !PAY.razorpay.enabled) {
+                wptmToast(PAYI18N.payFailed || 'Razorpay is not ready.', 'error');
+                return;
+            }
+            setLoading(true);
+            createBooking(function(bd) {
+                if (!bd) { setLoading(false); return; }
+                wptmAjax('wptm_razorpay_create_order', { booking_id: bd.booking_id }, function(r) {
+                    if (!r.success || !r.data || !r.data.order_id) {
+                        razorpayFail(r.data && r.data.message ? r.data.message : null);
+                        return;
+                    }
+                    const d = r.data;
+                    const rzp = new Razorpay({
+                        key: d.key_id,
+                        amount: d.amount,
+                        currency: d.currency,
+                        name: d.name,
+                        description: d.description,
+                        order_id: d.order_id,
+                        prefill: d.prefill || {},
+                        theme: { color: '#fd4621' },
+                        handler: function(resp) {
+                            wptmAjax('wptm_razorpay_verify', {
+                                booking_id: bd.booking_id,
+                                razorpay_payment_id: resp.razorpay_payment_id,
+                                razorpay_order_id: resp.razorpay_order_id,
+                                razorpay_signature: resp.razorpay_signature,
+                            }, function(c) {
+                                if (c.success && c.data && c.data.redirect) {
+                                    window.location.href = c.data.redirect;
+                                } else {
+                                    razorpayFail(c.data && c.data.message ? c.data.message : null);
+                                }
+                            });
+                        },
+                        modal: { ondismiss: function() { setLoading(false); } },
+                    });
+                    rzp.on('payment.failed', function(resp) {
+                        razorpayFail(resp && resp.error && resp.error.description ? resp.error.description : null);
+                    });
+                    rzp.open();
+                });
+            });
+        }
+
         // Reveal the detail area for the active method; PayPal swaps in its own
         // buttons in place of the normal submit button.
         function applyMethodUI() {
@@ -493,6 +547,7 @@
             const method = selectedMethod();
 
             if (method === 'stripe') { payWithStripe(); return; }
+            if (method === 'razorpay') { payWithRazorpay(); return; }
 
             // Manual / bank transfer — create the booking, then to the order page.
             setLoading(true);

@@ -73,6 +73,7 @@ $wptm_page_field = function ( $option_key ) use ( $all_pages ) {
                         <?php if ( wptm_is_pro() ) : ?>
                         <a class="wptm-nav-item" data-panel="stripe"><?php esc_html_e( 'Stripe', 'wp-travel-machine' ); ?></a>
                         <a class="wptm-nav-item" data-panel="paypal"><?php esc_html_e( 'PayPal', 'wp-travel-machine' ); ?></a>
+                        <a class="wptm-nav-item" data-panel="razorpay"><?php esc_html_e( 'Razorpay', 'wp-travel-machine' ); ?></a>
                         <?php endif; ?>
                         <a class="wptm-nav-item" data-panel="manual"><?php esc_html_e( 'Manual Payment', 'wp-travel-machine' ); ?></a>
                     </div>
@@ -478,6 +479,60 @@ $wptm_page_field = function ( $option_key ) use ( $all_pages ) {
                                 <option value="live" <?php selected( get_option( 'wptm_paypal_mode' ), 'live' ); ?>><?php esc_html_e( 'Live', 'wp-travel-machine' ); ?></option>
                             </select>
                             <p class="wptm-field__desc"><?php esc_html_e( 'Use Sandbox for testing and Live for real payments.', 'wp-travel-machine' ); ?></p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Panel: Razorpay -->
+                <section class="wptm-settings-panel" data-panel="razorpay">
+                    <h2 class="wptm-panel-title"><?php esc_html_e( 'Razorpay', 'wp-travel-machine' ); ?></h2>
+
+                    <div class="wptm-field">
+                        <div class="wptm-field__label"><label><?php esc_html_e( 'Enable Razorpay', 'wp-travel-machine' ); ?></label></div>
+                        <div class="wptm-field__control">
+                            <label class="wptm-switch">
+                                <input type="checkbox" name="settings[wptm_razorpay_enabled]" value="1" <?php checked( get_option( 'wptm_razorpay_enabled' ) ); ?>>
+                                <span class="wptm-switch__slider"></span>
+                            </label>
+                            <p class="wptm-field__desc"><?php esc_html_e( 'Accept cards, UPI, netbanking and wallets via Razorpay at checkout.', 'wp-travel-machine' ); ?></p>
+                        </div>
+                    </div>
+
+                    <div class="wptm-field">
+                        <div class="wptm-field__label"><label><?php esc_html_e( 'Key ID', 'wp-travel-machine' ); ?></label></div>
+                        <div class="wptm-field__control">
+                            <input type="text" name="settings[wptm_razorpay_key_id]" value="<?php echo esc_attr( get_option( 'wptm_razorpay_key_id' ) ); ?>" class="wptm-field__input" placeholder="rzp_live_… / rzp_test_…">
+                            <p class="wptm-field__desc"><?php esc_html_e( 'Your Razorpay Key ID (Dashboard → Settings → API Keys).', 'wp-travel-machine' ); ?></p>
+                        </div>
+                    </div>
+
+                    <div class="wptm-field">
+                        <div class="wptm-field__label"><label><?php esc_html_e( 'Key Secret', 'wp-travel-machine' ); ?></label></div>
+                        <div class="wptm-field__control">
+                            <input type="password" name="settings[wptm_razorpay_key_secret]" value="<?php echo esc_attr( get_option( 'wptm_razorpay_key_secret' ) ); ?>" class="wptm-field__input">
+                            <p class="wptm-field__desc"><?php esc_html_e( 'Your Razorpay Key Secret. Keep this private.', 'wp-travel-machine' ); ?></p>
+                        </div>
+                    </div>
+
+                    <div class="wptm-field">
+                        <div class="wptm-field__label"><label><?php esc_html_e( 'Webhook Endpoint', 'wp-travel-machine' ); ?></label></div>
+                        <div class="wptm-field__control">
+                            <div class="wptm-copy-row">
+                                <input type="text" class="wptm-field__input" id="wptm-razorpay-webhook-url" value="<?php echo esc_attr( \WPTravelMachine\Payment\RazorpayGateway::webhook_url() ); ?>" readonly onfocus="this.select()">
+                                <button type="button" class="button wptm-copy-btn" data-copy-target="#wptm-razorpay-webhook-url"><span class="dashicons dashicons-clipboard"></span> <?php esc_html_e( 'Copy', 'wp-travel-machine' ); ?></button>
+                            </div>
+                            <p class="wptm-field__desc">
+                                <?php esc_html_e( 'In the Razorpay Dashboard → Settings → Webhooks, add a webhook with this URL and subscribe to the', 'wp-travel-machine' ); ?>
+                                <code>order.paid</code> <?php esc_html_e( 'event. This confirms bookings even if the customer closes the payment window.', 'wp-travel-machine' ); ?>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="wptm-field">
+                        <div class="wptm-field__label"><label><?php esc_html_e( 'Webhook Secret', 'wp-travel-machine' ); ?></label></div>
+                        <div class="wptm-field__control">
+                            <input type="password" name="settings[wptm_razorpay_webhook_secret]" value="<?php echo esc_attr( get_option( 'wptm_razorpay_webhook_secret' ) ); ?>" class="wptm-field__input">
+                            <p class="wptm-field__desc"><?php esc_html_e( 'The secret you set when creating the webhook in Razorpay. Required to verify incoming events.', 'wp-travel-machine' ); ?></p>
                         </div>
                     </div>
                 </section>
